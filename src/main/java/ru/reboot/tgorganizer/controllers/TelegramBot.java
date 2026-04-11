@@ -1,15 +1,15 @@
-package ru.reboot.tgorganizer.models;
+package ru.reboot.tgorganizer.controllers;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 
 @Component
-public class Bot extends TelegramBotsLongPollingApplication {
+public class TelegramBot extends TelegramBotsLongPollingApplication {
     private final String botToken;
     private final String botName;
 
-    public Bot(
+    public TelegramBot(
             @Value("${bot.token}") String botToken,
             @Value("${bot.name}") String botName) {
 
