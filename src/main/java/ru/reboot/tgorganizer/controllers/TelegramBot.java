@@ -18,9 +18,9 @@ public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThrea
     private final TelegramClient telegramClient;
     private final String botToken;
 
-    public TelegramBot(@Value("${bot.telegram.token}") String botToken) {
+    public TelegramBot(@Value("${bot.telegram.token}") String botToken, TelegramClient telegramClient) {
         this.botToken = botToken;
-        telegramClient = new OkHttpTelegramClient(getBotToken());
+        this.telegramClient = telegramClient;
 
         log.info("Инициализация ТГ бота прошла успешно");
     }
