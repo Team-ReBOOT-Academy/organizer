@@ -21,8 +21,8 @@ public class TelegramBotConfig {
     public OkHttpClient okHttpClient(
             @Value("${proxy.host}") String host,
             @Value("${proxy.port}") int port,
-            @Value("${proxy.username}") String username,
-            @Value("${proxy.password}") String password
+            @Value("${proxy.user}") String username,
+            @Value("${proxy.pass}") String password
     ) {
         return new TelegramOkHttpClientFactory.HttpProxyOkHttpClientCreator(
                 () -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port)),
