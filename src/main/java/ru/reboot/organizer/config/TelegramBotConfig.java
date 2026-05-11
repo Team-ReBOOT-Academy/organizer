@@ -12,7 +12,7 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.longpolling.util.TelegramOkHttpClientFactory;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import ru.reboot.organizer.utils.TelegramConnectionTester;
+import ru.reboot.organizer.utils.network.TelegramConnectionTester;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;

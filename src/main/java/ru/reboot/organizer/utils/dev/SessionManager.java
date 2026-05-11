@@ -1,4 +1,4 @@
-package ru.reboot.organizer.utils;
+package ru.reboot.organizer.utils.dev;
 
 import org.springframework.stereotype.Component;
 import ru.reboot.organizer.entities.UserState;
@@ -11,7 +11,7 @@ public class SessionManager {
     private final Map<Long, UserState> sessions = new ConcurrentHashMap<>();
 
     public UserState getUserState(Long chatId) {
-        return sessions.getOrDefault(chatId, UserState.WAITING_FOR_COMMAND);
+        return sessions.getOrDefault(chatId, UserState.UNKNOWN_STATE);
     }
 
     public void setUserState(Long chatId, UserState state) {

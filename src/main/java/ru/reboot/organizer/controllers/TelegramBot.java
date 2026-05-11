@@ -12,6 +12,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.reboot.organizer.services.UpdateDispatcherService;
 
+/**
+ * Класс-контроллер бота Telegram
+ */
 @Slf4j
 @Component
 public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
@@ -36,8 +39,6 @@ public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThrea
     public LongPollingUpdateConsumer getUpdatesConsumer() {
         return this;
     }
-
-
 
     @Override
     public void consume(Update update) {
