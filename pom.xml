@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>4.0.6</version>
+        <relativePath/>
     </parent>
     <groupId>ru.ReBOOT</groupId>
-    <artifactId>tg-organizer</artifactId>
+    <artifactId>organizer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tg-organizer</name>
-    <description>tg-organizer</description>
+    <name>organizer</name>
+    <description>organizer</description>
     <url/>
     <licenses>
         <license/>
@@ -40,11 +40,6 @@
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-client</artifactId>
             <version>9.5.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
         <dependency>

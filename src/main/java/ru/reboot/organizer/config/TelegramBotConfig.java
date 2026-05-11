@@ -1,4 +1,4 @@
-package ru.reboot.tgorganizer.config;
+package ru.reboot.organizer.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.longpolling.util.TelegramOkHttpClientFactory;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import ru.reboot.tgorganizer.utils.TelegramConnectionTester;
+import ru.reboot.organizer.utils.TelegramConnectionTester;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;

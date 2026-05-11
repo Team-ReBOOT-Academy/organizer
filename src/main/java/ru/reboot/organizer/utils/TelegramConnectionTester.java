@@ -1,4 +1,4 @@
-package ru.reboot.tgorganizer.utils;
+package ru.reboot.organizer.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;

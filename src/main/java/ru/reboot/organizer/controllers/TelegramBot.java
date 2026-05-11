@@ -1,4 +1,4 @@
-package ru.reboot.tgorganizer.controllers;
+package ru.reboot.organizer.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +33,8 @@ public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThrea
     public LongPollingUpdateConsumer getUpdatesConsumer() {
         return this;
     }
+
+
 
     @Override
     public void consume(Update update) {

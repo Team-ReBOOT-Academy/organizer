@@ -1,4 +1,4 @@
-package ru.reboot.tgorganizer;
+package ru.reboot.organizer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
