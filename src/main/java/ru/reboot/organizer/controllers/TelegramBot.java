@@ -6,20 +6,23 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ru.reboot.organizer.services.UpdateDispatcherService;
 
 @Slf4j
 @Component
 public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
     private final String botToken;
+    private final UpdateDispatcherService service;
 
-    public TelegramBot(@Value("${bot.telegram.token}") String botToken, TelegramClient telegramClient) {
+    public TelegramBot(@Value("${bot.telegram.token}") String botToken, TelegramClient telegramClient, UpdateDispatcherService service) {
         this.botToken = botToken;
         this.telegramClient = telegramClient;
+        this.service = service;
 
         log.info("Инициализация ТГ бота прошла успешно");
     }
@@ -38,19 +41,13 @@ public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThrea
 
     @Override
     public void consume(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String message_text = update.getMessage().getText();
-            long chat_id = update.getMessage().getChatId();
+        BotApiMethod<?> response = service.dispatch(update);
 
-            SendMessage sendMessage = SendMessage.builder()
-                    .chatId(chat_id)
-                    .text(message_text)
-                    .build();
-
+        if (response != null) {
             try {
-                telegramClient.execute(sendMessage);
+                telegramClient.execute(response);
             } catch (TelegramApiException e) {
-                log.info("Ошибка при отправке сообщения: {}", e.getMessage());
+                log.error("Ошибка при отправке сообщения: {}", e.getMessage());
             }
         }
     }
