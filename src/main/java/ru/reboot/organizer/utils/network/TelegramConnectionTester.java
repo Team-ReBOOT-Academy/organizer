@@ -18,8 +18,8 @@ public class TelegramConnectionTester {
         log.info("Проверка прямого соединения с Telegram API");
 
         OkHttpClient client = new OkHttpClient().newBuilder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(2, TimeUnit.SECONDS)
                 .build();
 
         Request request = new Request.Builder()

@@ -1,50 +1,45 @@
 package ru.reboot.organizer.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.message.Message;
+import ru.reboot.organizer.handlers.TelegramHandler;
 import ru.reboot.organizer.utils.dev.SessionManager;
-import ru.reboot.organizer.utils.keyboard.KeyboardFactory;
 
-/**
- * Сервис определения и обработки Update
- */
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UpdateDispatcherService {
     private final SessionManager sessionManager;
-    private final KeyboardFactory keyboardFactory;
 
-    /**
-     * Логика определения конкретного типа update из общего
-     * @param update сырое обновление, полученное от сервера
-     * @return Сообщение, отправляемое пользователю
-     */
+    private final List<TelegramHandler> handlers;
+
     public BotApiMethod<?> dispatch(Update update) {
+        Long chatId = extractChatId(update);
+        if (chatId == null) return null;
 
+        String currentState = sessionManager.getUserState(chatId);
+
+        for (TelegramHandler handler : handlers) {
+            if (handler.supports(update, currentState)) {
+                return handler.handle(update, currentState, chatId);
+            }
+        }
+
+        log.warn("Не найден обработчик для Update: {}", update);
         return null;
     }
 
-    /**
-     * Обработка Update типа Callback
-     * @param callbackQuery событие нажатия на кнопку
-     * @return сообщение для отправки пользователю
-     */
-    private BotApiMethod<?> processCallback(CallbackQuery callbackQuery) {
-        // TODO
-        return null;
-    }
-
-    /**
-     * Обработка Update типа Text
-     * @param message сообщение пользователя
-     * @return сообщение для отправки пользователю
-     */
-    private BotApiMethod<?> processText(Message message) {
-        // TODO
+    private Long extractChatId(Update update) {
+        if (update.hasMessage()) {
+            return update.getMessage().getChatId();
+        } else if (update.hasCallbackQuery()) {
+            return update.getCallbackQuery().getMessage().getChatId();
+        }
         return null;
     }
 }

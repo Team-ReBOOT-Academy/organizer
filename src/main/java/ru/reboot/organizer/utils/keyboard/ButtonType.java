@@ -1,18 +1,9 @@
 package ru.reboot.organizer.utils.keyboard;
 
-import lombok.Getter;
-
-/**
- * Класс типов кнопок Telegram Inline-keyboard
- */
-@Getter
-public enum ButtonType {
-    UNKNOWN_BUTTON("UNKNOWN_BUTTON");
-
-    private final String payload;
-
-    ButtonType(String payload) {
-        this.payload = payload;
-    }
-
+public class ButtonType {
+    public static final String MAIN_MENU = "MAIN_MENU";
+    public static final String TASK_LIST = "TASK_LIST";
+    public static final String CREATE_NEW_TASK = "CREATE_NEW_TASK";
+    public static final String LINK_MAX = "LINK_MAX";
+    public static final String CREDENTIALS = "CREDENTIALS";
 }
