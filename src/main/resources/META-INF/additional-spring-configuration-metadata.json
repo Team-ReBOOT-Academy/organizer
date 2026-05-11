@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "proxy.port",
+      "type": "java.lang.String",
+      "description": "Proxy server port"
+    },
+    {
+      "name": "bot.telegram.token",
+      "type": "java.lang.String",
+      "description": "Description for bot.telegram.token."
+    },
+    {
+      "name": "proxy.host",
+      "type": "java.lang.String",
+      "description": "Description for proxy.host."
+    },
+    {
+      "name": "proxy.user",
+      "type": "java.lang.String",
+      "description": "Description for proxy.user."
+    },
+    {
+      "name": "proxy.pass",
+      "type": "java.lang.String",
+      "description": "Description for proxy.pass."
+    }
+  ] }
