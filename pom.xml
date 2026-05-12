@@ -46,6 +46,12 @@
         </dependency>
 
         <dependency>
+            <groupId>ru.max</groupId>
+            <artifactId>bots</artifactId>
+            <version>1.0.1-spring-boot-starter-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>

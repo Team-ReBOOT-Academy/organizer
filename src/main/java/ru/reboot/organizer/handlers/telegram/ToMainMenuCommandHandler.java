@@ -1,4 +1,4 @@
-package ru.reboot.organizer.handlers;
+package ru.reboot.organizer.handlers.telegram;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

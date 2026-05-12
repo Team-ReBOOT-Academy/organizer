@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.reboot.organizer.handlers.TelegramHandler;
+import ru.reboot.organizer.handlers.telegram.TelegramHandler;
 import ru.reboot.organizer.utils.dev.SessionManager;
 
 import java.util.List;

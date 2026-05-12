@@ -24,5 +24,10 @@
       "name": "proxy.pass",
       "type": "java.lang.String",
       "description": "Description for proxy.pass."
+    },
+    {
+      "name": "max.bot.token",
+      "type": "java.lang.String",
+      "description": "Description for max.bot.token."
     }
   ] }

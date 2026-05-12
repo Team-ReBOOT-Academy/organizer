@@ -1,4 +1,4 @@
-package ru.reboot.organizer.handlers;
+package ru.reboot.organizer.handlers.telegram;
 
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
