@@ -16,8 +16,10 @@ import ru.reboot.organizer.utils.network.TelegramConnectionTester;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * Настройки конфигурации для Telegram бота
+ */
 @Slf4j
 @Configuration
 public class TelegramBotConfig {
@@ -29,46 +31,31 @@ public class TelegramBotConfig {
             @Value("${proxy.user}") String username,
             @Value("${proxy.pass}") String password
     ) {
-        int[] backoffSeconds = {2, 5, 10, 15, 30};
-        int attempt = 0;
+        log.info("Инициализация HTTP-клиента для Telegram...");
 
-        while (true) {
-            log.info("Инициализация HTTP-клиента для Telegram...");
-
-            if (tester.isDirectConnectionAvailable()) {
-                log.info("Будет использовано прямое подключение.");
-                return new OkHttpClient();
-            }
-
-            log.warn("Прямое соединение недоступно. Попытка использовать прокси...");
-            if (tester.isProxyConnectionAvailable(host, port, username, password)) {
-                log.info("Будет использовано подключение через прокси.");
-
-                return new TelegramOkHttpClientFactory.HttpProxyOkHttpClientCreator(
-                        () -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port)),
-                        () -> (route, response) -> {
-                            String credentials = Credentials.basic(username, password);
-                            return response
-                                    .request()
-                                    .newBuilder()
-                                    .header("Proxy-Authorization", credentials)
-                                    .build();
-                        }
-                ).get();
-            }
-
-            int waitTime = (attempt < backoffSeconds.length) ? backoffSeconds[attempt] : 30;
-            log.error("Нет доступа к Telegram API. Повторная попытка через {} секунд", waitTime);
-
-            try {
-                TimeUnit.SECONDS.sleep(waitTime);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Ожидание сети было прервано", e);
-            }
-
-            attempt++;
+        if (tester.isDirectConnectionAvailable()) {
+            log.info("Будет использовано прямое подключение.");
+            return new OkHttpClient();
         }
+
+        log.warn("Прямое соединение недоступно. Попытка использовать прокси...");
+        if (tester.isProxyConnectionAvailable(host, port, username, password)) {
+            log.info("Будет использовано подключение через прокси.");
+
+            return new TelegramOkHttpClientFactory.HttpProxyOkHttpClientCreator(
+                    () -> new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port)),
+                    () -> (route, response) -> {
+                        String credentials = Credentials.basic(username, password);
+                        return response
+                                .request()
+                                .newBuilder()
+                                .header("Proxy-Authorization", credentials)
+                                .build();
+                    }
+            ).get();
+        }
+
+        throw new IllegalStateException("Соединение невозможно ни одним способом");
     }
 
     @Bean(value = "telegramClient")

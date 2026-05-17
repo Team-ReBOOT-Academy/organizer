@@ -3,31 +3,31 @@
     {
       "name": "proxy.port",
       "type": "java.lang.String",
-      "description": "Proxy server port"
+      "description": "Порт прокси сервера."
     },
     {
       "name": "bot.telegram.token",
       "type": "java.lang.String",
-      "description": "Description for bot.telegram.token."
+      "description": "Токен Telegram бота."
     },
     {
       "name": "proxy.host",
       "type": "java.lang.String",
-      "description": "Description for proxy.host."
+      "description": "Адрес хоста прокси сервера."
     },
     {
       "name": "proxy.user",
       "type": "java.lang.String",
-      "description": "Description for proxy.user."
+      "description": "Имя пользователя прокси сервера."
     },
     {
       "name": "proxy.pass",
       "type": "java.lang.String",
-      "description": "Description for proxy.pass."
+      "description": "Пароль прокси сервера."
     },
     {
       "name": "max.bot.token",
       "type": "java.lang.String",
-      "description": "Description for max.bot.token."
+      "description": "Токен Max бота."
     }
   ] }

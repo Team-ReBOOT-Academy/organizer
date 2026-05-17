@@ -9,11 +9,18 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Класс для тестирования соединения с Telegram
+ */
 @Slf4j
 @Component
 public class TelegramConnectionTester {
     private final String TEST_URL = "https://api.telegram.org";
 
+    /**
+     * Проверка возможности прямого подключения к Telegram API
+     * @return возможность прямого подключения
+     */
     public boolean isDirectConnectionAvailable() {
         log.info("Проверка прямого соединения с Telegram API");
 
@@ -37,6 +44,14 @@ public class TelegramConnectionTester {
 
     }
 
+    /**
+     * Проверка возможности подключения к Telegram API через прокси-сервер
+     * @param host адрес хоста прокси-сервера
+     * @param port порт хоста прокси-сервера
+     * @param username имя пользователя хоста прокси-сервера
+     * @param password пароль хоста прокси сервера
+     * @return возможность подключения через прокси-сервер
+     */
     public boolean isProxyConnectionAvailable(String host, int port, String username, String password) {
         log.info("Проверка соедининения с Telegram API через прокси {}:{}", host, port);
 

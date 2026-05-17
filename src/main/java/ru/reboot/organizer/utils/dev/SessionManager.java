@@ -7,13 +7,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class SessionManager {
-    private final Map<Long, String> sessions = new ConcurrentHashMap<>();
+    private final Map<Long, String> userScreenByUserId = new ConcurrentHashMap<>();
 
-    public String getUserState(Long chatId) {
-        return sessions.getOrDefault(chatId, "DEFAULT_STATE");
+    public void setUserScreen(Long userId, String screen) {
+        userScreenByUserId.put(userId, screen);
     }
 
-    public void setUserState(Long chatId, String state) {
-        sessions.put(chatId, state);
+    public String getUserScreen(Long userId) {
+        return userScreenByUserId.getOrDefault(userId, UserScreens.DEFAULT_SCREEN);
     }
 }
