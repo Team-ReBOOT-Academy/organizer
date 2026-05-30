@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.reboot.organizer.dto.ButtonType;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.dto.UserRequest;
+import ru.reboot.organizer.services.outbound.NotificationService;
 import ru.reboot.organizer.utils.dev.SessionManager;
 import ru.reboot.organizer.utils.dev.UserScreens;
 
@@ -12,6 +13,8 @@ import ru.reboot.organizer.utils.dev.UserScreens;
 @RequiredArgsConstructor
 public class CoreRouterService {
     private final SessionManager sessionManager;
+    private final PlatformLinkService platformLinkService;
+    private final NotificationService notificationService;
 
     public UnifiedResponse route(UserRequest request) {
         String currentScreen = sessionManager.getUserScreen(request.globalUserId());
@@ -34,7 +37,40 @@ public class CoreRouterService {
     }
 
     private UnifiedResponse handlePlatformLinkInput(Long userId, String text) {
-        return buildMainMenu(userId);
+        String cleanCode = text.trim().toUpperCase();
+
+        PlatformLinkService.LinkAttemptResult attempt = platformLinkService.linkAccountByCode(userId, cleanCode);
+
+        sessionManager.setUserScreen(userId, UserScreens.MAIN_MENU);
+
+        return switch (attempt.result()) {
+            case PENDING_CONFIRMATION -> {
+                notificationService.sendConfirmationRequest(attempt.creatorUserId(), userId);
+
+                yield UnifiedResponse.builder()
+                        .text("✅ Код верный!\n\nНа платформу, где был сгенерирован код, отправлен запрос. Подтвердите подключение там.")
+                        .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                        .build();
+            }
+
+            case INVALID -> UnifiedResponse.builder()
+                    .text("❌ Неверный код. Проверьте правильность ввода.")
+                    .row().button("Попробовать еще раз", ButtonType.ENTER_LINK_CODE)
+                    .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                    .build();
+
+            case EXPIRED -> UnifiedResponse.builder()
+                    .text("⏱ Время действия кода истекло (прошло больше 10 минут). Сгенерируйте новый.")
+                    .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                    .build();
+
+            case SAME_USER -> UnifiedResponse.builder()
+                    .text("Вы пытаетесь привязать платформу саму к себе :)")
+                    .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                    .build();
+
+            case SUCCESS -> buildMainMenu(userId);
+        };
     }
 
     private UnifiedResponse handleNewTaskInput(Long userId, String text) {
@@ -84,7 +120,7 @@ public class CoreRouterService {
             }
 
             case GENERATE_LINK_CODE -> {
-                String code = PlatformLinkService.getOrGenerateCodeForUser(userId);
+                String code = platformLinkService.getOrGenerateCodeForUser(userId);
 
                 yield UnifiedResponse.builder()
                         .text("Код привязки:\n\n"
@@ -101,6 +137,30 @@ public class CoreRouterService {
                         .text("Введите 6-значный код привязки:")
                         .row()
                         .button("Отмена", ButtonType.BACK_TO_MAIN_MENU)
+                        .build();
+            }
+
+            case CONFIRM_LINK -> {
+                boolean isMerged = platformLinkService.confirmLink(userId);
+
+                if (isMerged) {
+                    yield UnifiedResponse.builder()
+                            .text("✅ Платформы успешно связаны! Теперь у вас общая база задач.")
+                            .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                            .build();
+                } else {
+                    yield UnifiedResponse.builder()
+                            .text("❌ Заявка на привязку не найдена или устарела.")
+                            .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                            .build();
+                }
+            }
+
+            case REJECT_LINK -> {
+                platformLinkService.rejectLink(userId);
+                yield UnifiedResponse.builder()
+                        .text("🛡 Подключение отклонено. Безопасность превыше всего.")
+                        .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
                         .build();
             }
         };
