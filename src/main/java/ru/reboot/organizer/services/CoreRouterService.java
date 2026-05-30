@@ -69,12 +69,40 @@ public class CoreRouterService {
                         .button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
                     .build();
 
-            case LINK_PLATFORM -> UnifiedResponse.builder().
-                    text("Функция в разработке")
-                    .row()
-                        .button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
-                    .build();
+            case LINK_PLATFORM -> {
+                sessionManager.setUserScreen(userId, UserScreens.LINK_PLATFORM_MENU);
 
+                yield UnifiedResponse.builder()
+                        .text("Подключение платформы")
+                        .row()
+                            .button("Сгенерировать код", ButtonType.GENERATE_LINK_CODE)
+                        .row()
+                            .button("Ввести код", ButtonType.ENTER_LINK_CODE)
+                        .row()
+                            .button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                        .build();
+            }
+
+            case GENERATE_LINK_CODE -> {
+                String code = PlatformLinkService.getOrGenerateCodeForUser(userId);
+
+                yield UnifiedResponse.builder()
+                        .text("Код привязки:\n\n"
+                                + code + "\n\n" +
+                                "Код действует 10 минут. Введите его на другой платформе")
+                        .row()
+                            .button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
+                        .build();
+            }
+
+            case ENTER_LINK_CODE -> {
+                sessionManager.setUserScreen(userId, UserScreens.PLATFORM_LINK_INPUT);
+                yield UnifiedResponse.builder()
+                        .text("Введите 6-значный код привязки:")
+                        .row()
+                        .button("Отмена", ButtonType.BACK_TO_MAIN_MENU)
+                        .build();
+            }
         };
     }
 
