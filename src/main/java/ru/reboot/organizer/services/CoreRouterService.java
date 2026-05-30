@@ -45,22 +45,29 @@ public class CoreRouterService {
 
         return switch (attempt.result()) {
             case PENDING_CONFIRMATION -> {
-                notificationService.sendConfirmationRequest(attempt.creatorUserId(), userId);
+                UnifiedResponse pushMessage = UnifiedResponse.builder()
+                        .text("Попытка входа с другого устройства. Разрешить объединение профилей?")
+                        .row()
+                            .button("Подтвердить", ButtonType.CONFIRM_LINK)
+                            .button("Отклонить", ButtonType.REJECT_LINK)
+                        .build();
+
+                notificationService.sendNotification(attempt.creatorUserId(), pushMessage);
 
                 yield UnifiedResponse.builder()
-                        .text("✅ Код верный!\n\nНа платформу, где был сгенерирован код, отправлен запрос. Подтвердите подключение там.")
+                        .text("Код верный\n\nНа платформу, где был сгенерирован код, отправлен запрос. Подтвердите подключение там.")
                         .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
                         .build();
             }
 
             case INVALID -> UnifiedResponse.builder()
-                    .text("❌ Неверный код. Проверьте правильность ввода.")
+                    .text("Неверный код. Проверьте правильность ввода.")
                     .row().button("Попробовать еще раз", ButtonType.ENTER_LINK_CODE)
                     .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
                     .build();
 
             case EXPIRED -> UnifiedResponse.builder()
-                    .text("⏱ Время действия кода истекло (прошло больше 10 минут). Сгенерируйте новый.")
+                    .text("Время действия кода истекло (прошло больше 10 минут). Сгенерируйте новый.")
                     .row().button("В главное меню", ButtonType.BACK_TO_MAIN_MENU)
                     .build();
 

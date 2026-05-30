@@ -16,6 +16,7 @@ import ru.reboot.organizer.dto.UserRequest;
 import ru.reboot.organizer.mappers.max.MaxRequestMapper;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.services.CoreRouterService;
+import ru.reboot.organizer.utils.dev.SessionManager;
 
 @Slf4j
 @Component
@@ -25,6 +26,8 @@ public class MaxBotController implements MaxBotUpdateListener {
     private final MaxResponseMapper responseMapper;
     private final CoreRouterService coreRouterService;
     private final MaxClient maxClient;
+    // Заглушка
+    private final SessionManager sessionManager;
 
     @Override
     public void onBotStarted(BotStartedUpdate update) {
@@ -50,6 +53,8 @@ public class MaxBotController implements MaxBotUpdateListener {
         try {
             UserRequest request = requestMapper.map(userId, incomingData);
 
+            // Заглушка
+            sessionManager.setUserPlatform(userId, "MAX");
             UnifiedResponse unifiedResponse = coreRouterService.route(request);
 
             NewMessageBody messageBody = responseMapper.mapToMaxMessage(unifiedResponse);

@@ -15,6 +15,7 @@ import ru.reboot.organizer.dto.UserRequest;
 import ru.reboot.organizer.mappers.telegram.TelegramRequestMapper;
 import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
 import ru.reboot.organizer.services.CoreRouterService;
+import ru.reboot.organizer.utils.dev.SessionManager;
 
 /**
  * Класс-контроллер для Telegram бота
@@ -27,20 +28,24 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
     private final TelegramRequestMapper requestMapper;
     private final TelegramResponseMapper responseMapper;
     private final CoreRouterService coreRouterService;
+    // Заглушка
+    private final SessionManager sessionManager;
 
     public TelegramBotController(@Value("${bot.telegram.token}") String botToken,
                                  TelegramClient telegramClient,
                                  TelegramRequestMapper requestMapper,
                                  TelegramResponseMapper responseMapper,
-                                 CoreRouterService coreRouterService
+                                 CoreRouterService coreRouterService,
+                                 // Заглушка
+                                 SessionManager sessionManager
     ) {
         this.requestMapper = requestMapper;
         this.responseMapper = responseMapper;
         this.coreRouterService = coreRouterService;
         this.botToken = botToken;
         this.telegramClient = telegramClient;
-
-        log.info("Инициализация ТГ бота прошла успешно");
+        // Заглушка
+        this.sessionManager = sessionManager;
     }
 
     @Override
@@ -60,6 +65,8 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
 
             if (request.globalUserId() == -1L || request.text().isEmpty()) return;
 
+            // Заглушка
+            sessionManager.setUserPlatform(request.globalUserId(), "TELEGRAM");
             UnifiedResponse unifiedResponse = coreRouterService.route(request);
 
             Integer messageIdToEdit = requestMapper.extractMessageIdForEdit(update);
