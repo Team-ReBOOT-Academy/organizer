@@ -1,4 +1,4 @@
-package ru.reboot.organizer.routing.handlers.button;
+package ru.reboot.organizer.routing.handlers.button.menu.link;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,22 +9,20 @@ import ru.reboot.organizer.services.PlatformLinkService;
 
 @Component
 @RequiredArgsConstructor
-public class GenerateCodeButtonHandler implements ButtonHandler {
+public class RejectLinkButtonHandler implements ButtonHandler {
     private final PlatformLinkService platformLinkService;
 
     @Override
     public ButtonType getHandledButton() {
-        return ButtonType.GENERATE_LINK_CODE;
+        return ButtonType.REJECT_LINK;
     }
 
     @Override
     public UnifiedResponse handleButton(Long userId) {
-        String code = platformLinkService.getOrGenerateCodeForUser(userId);
+        platformLinkService.rejectLink(userId);
 
         return UnifiedResponse.builder()
-                .text("Код привязки:\n\n"
-                        + code + "\n\n" +
-                        "Код действует 10 минут. Введите его на другой платформе")
+                .text("🛡 Подключение отклонено. Безопасность превыше всего.")
                 .row().button("В главное меню", ButtonType.MAIN_MENU)
                 .build();
     }

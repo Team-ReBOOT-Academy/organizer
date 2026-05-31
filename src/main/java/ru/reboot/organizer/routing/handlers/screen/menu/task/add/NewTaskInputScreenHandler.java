@@ -1,4 +1,4 @@
-package ru.reboot.organizer.routing.handlers.screen;
+package ru.reboot.organizer.routing.handlers.screen.menu.task.add;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

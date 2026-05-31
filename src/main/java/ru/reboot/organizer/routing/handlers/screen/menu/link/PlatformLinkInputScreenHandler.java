@@ -1,4 +1,4 @@
-package ru.reboot.organizer.routing.handlers.screen;
+package ru.reboot.organizer.routing.handlers.screen.menu.link;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

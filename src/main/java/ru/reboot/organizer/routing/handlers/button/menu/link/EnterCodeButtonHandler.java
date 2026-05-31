@@ -1,4 +1,4 @@
-package ru.reboot.organizer.routing.handlers.button;
+package ru.reboot.organizer.routing.handlers.button.menu.link;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,26 +10,22 @@ import ru.reboot.organizer.utils.dev.UserScreens;
 
 @Component
 @RequiredArgsConstructor
-public class LinkPlatformButtonHandler implements ButtonHandler {
+public class EnterCodeButtonHandler implements ButtonHandler {
     private final SessionManager sessionManager;
 
     @Override
     public ButtonType getHandledButton() {
-        return ButtonType.LINK_PLATFORM;
+        return ButtonType.ENTER_LINK_CODE;
     }
 
     @Override
     public UnifiedResponse handleButton(Long userId) {
-        sessionManager.setUserScreen(userId, UserScreens.LINK_PLATFORM_MENU);
+        sessionManager.setUserScreen(userId, UserScreens.PLATFORM_LINK_INPUT);
 
         return UnifiedResponse.builder()
-                .text("Подключение платформы")
+                .text("Введите 6-значный код привязки:")
                 .row()
-                .button("Сгенерировать код", ButtonType.GENERATE_LINK_CODE)
-                .row()
-                .button("Ввести код", ButtonType.ENTER_LINK_CODE)
-                .row()
-                .button("В главное меню", ButtonType.MAIN_MENU)
+                .button("Отмена", ButtonType.MAIN_MENU)
                 .build();
     }
 }
