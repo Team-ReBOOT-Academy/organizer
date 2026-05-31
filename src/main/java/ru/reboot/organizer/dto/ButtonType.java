@@ -7,7 +7,7 @@ public enum ButtonType {
     NEW_TASK("btn_new_task"),
     TASK_LIST("btn_task_list"),
     LINK_PLATFORM("btn_link_platform"),
-    BACK_TO_MAIN_MENU("btn_back_to_main_menu"),
+    MAIN_MENU("btn_main_menu"),
     GENERATE_LINK_CODE("btn_generate_link_code"),
     ENTER_LINK_CODE("btn_enter_link_code"),
     CONFIRM_LINK("btn_confirm_link"),
