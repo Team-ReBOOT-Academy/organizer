@@ -54,7 +54,6 @@ public class TelegramBotConfig {
                     }
             ).get();
         }
-
         throw new IllegalStateException("Соединение невозможно ни одним способом");
     }
 
