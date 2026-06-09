@@ -3,6 +3,7 @@ package ru.reboot.organizer.services.outbound;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -10,11 +11,12 @@ import ru.SSP55.max.bots.api.client.MaxClient;
 import ru.SSP55.max.bots.api.exceptions.MaxApiException;
 import ru.SSP55.max.bots.api.methods.post.sendmessage.SendMessage;
 import ru.SSP55.max.bots.api.objects.newmessagebody.NewMessageBody;
+import ru.reboot.organizer.database.entity.AppUser;
 import ru.reboot.organizer.database.entity.PlatformAccount;
+import ru.reboot.organizer.database.repository.AppUserRepository;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
-import ru.reboot.organizer.services.SessionManagerService;
 
 /**
  * Сервис отправки уведомлений пользователю
@@ -23,9 +25,8 @@ import ru.reboot.organizer.services.SessionManagerService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Deprecated
 public class NotificationService {
-    private final SessionManagerService sessionManagerService;
+    private final AppUserRepository appUserRepository;
 
     private final TelegramResponseMapper telegramResponseMapper;
     private final MaxResponseMapper maxResponseMapper;
@@ -33,27 +34,55 @@ public class NotificationService {
     private final TelegramClient telegramClient;
     private final MaxClient maxClient;
 
-    @Deprecated
+    @Transactional(readOnly = true)
     public void sendNotification(Long globalUserId, UnifiedResponse notificationContent) {
-        PlatformAccount.PlatformType platform = sessionManagerService.getUserPlatform(globalUserId);
+        AppUser appUser = appUserRepository.findById(globalUserId).orElse(null);
+        if (appUser == null) {
+            log.warn("Не удалось отправить уведомление: пользователь с ID {} не найден.", globalUserId);
+            return;
+        }
 
-        try {
-            if (PlatformAccount.PlatformType.TELEGRAM.equals(platform)) {
-                BotApiMethod<?> telegramMessage = telegramResponseMapper.map(globalUserId, null, notificationContent);
-                telegramClient.execute(telegramMessage);
-            } else if (PlatformAccount.PlatformType.MAX.equals(platform)) {
+        PlatformAccount.PlatformType targetPlatform = appUser.getLastActivePlatform();
+
+        PlatformAccount targetAccount = appUser.getAccounts().stream()
+                .filter(acc -> acc.getPlatformType() == targetPlatform && !acc.isDeleted())
+                .findFirst()
+                .orElse(null);
+
+        if (targetAccount == null) {
+            log.warn("Не удалось отправить уведомление: нет активного аккаунта для платформы {}", targetPlatform);
+            return;
+        }
+
+        switch (targetPlatform) {
+            case TELEGRAM:
+                Long telegramChatId = Long.valueOf(targetAccount.getPlatformUserId());
+
+                BotApiMethod<?> telegramMessage = telegramResponseMapper.map(telegramChatId, null, notificationContent);
+                try {
+                    telegramClient.execute(telegramMessage);
+                } catch (TelegramApiException e) {
+                    log.error("Ошибка при отправке уведомления в Telegram (User: {}): {}", telegramChatId, e.getMessage());
+                }
+                break;
+
+            case MAX:
+                Long maxUserId = Long.valueOf(targetAccount.getPlatformUserId());
+
                 NewMessageBody messageBody = maxResponseMapper.mapToMaxMessage(notificationContent);
                 SendMessage maxMessageRequest = SendMessage.builder()
-                        .userId(globalUserId)
+                        .userId(maxUserId)
                         .body(messageBody)
                         .build();
+                try {
+                    maxClient.execute(maxMessageRequest);
+                } catch (MaxApiException e) {
+                    log.error("Ошибка при отправке уведомления в Max (User: {}): {}", maxUserId, e.getMessage());
+                }
+                break;
 
-                maxClient.execute(maxMessageRequest);
-            }
-        } catch (TelegramApiException e) {
-            log.error("Ошибка при отправке уведомления в Telegram: {}", e.getMessage());
-        } catch (MaxApiException e) {
-            log.error("Ошибка при отправке уведомления в Max: {}", e.getMessage());
+            default:
+                log.error("Неизвестная платформа для отправки: {}", targetPlatform);
         }
     }
 }
