@@ -65,14 +65,14 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
             }
 
             String telegramChatId = rawRequest.platformUserId();
-            Long globalAppUserId = sessionManagerService.getOrCreateAppUserId(telegramChatId, PlatformAccount.PlatformType.telegram);
-            sessionManagerService.setUserPlatform(globalAppUserId, PlatformAccount.PlatformType.telegram);
+            Long globalAppUserId = sessionManagerService.getOrCreateAppUserId(telegramChatId, PlatformAccount.PlatformType.TELEGRAM);
+            sessionManagerService.setUserPlatform(globalAppUserId, PlatformAccount.PlatformType.TELEGRAM);
 
             UserRequest internalRequest = new UserRequest(
                     globalAppUserId,
                     telegramChatId,
                     rawRequest.text(),
-                    PlatformAccount.PlatformType.telegram
+                    PlatformAccount.PlatformType.TELEGRAM
             );
 
             UnifiedResponse unifiedResponse = coreRouterService.route(internalRequest);

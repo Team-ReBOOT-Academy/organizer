@@ -51,7 +51,7 @@ public class SessionManagerService {
     public PlatformAccount.PlatformType getUserPlatform(Long appUserId) {
         return appUserRepository.findById(appUserId)
                 .map(AppUser::getLastActivePlatform)
-                .orElse(PlatformAccount.PlatformType.telegram);
+                .orElse(PlatformAccount.PlatformType.TELEGRAM);
     }
 
     private Long registerNewUser(String platformUserId, PlatformAccount.PlatformType platformType) {

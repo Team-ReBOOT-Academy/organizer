@@ -23,6 +23,7 @@ import ru.reboot.organizer.services.SessionManagerService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Deprecated
 public class NotificationService {
     private final SessionManagerService sessionManagerService;
 
@@ -32,14 +33,15 @@ public class NotificationService {
     private final TelegramClient telegramClient;
     private final MaxClient maxClient;
 
+    @Deprecated
     public void sendNotification(Long globalUserId, UnifiedResponse notificationContent) {
         PlatformAccount.PlatformType platform = sessionManagerService.getUserPlatform(globalUserId);
 
         try {
-            if (PlatformAccount.PlatformType.telegram.equals(platform)) {
+            if (PlatformAccount.PlatformType.TELEGRAM.equals(platform)) {
                 BotApiMethod<?> telegramMessage = telegramResponseMapper.map(globalUserId, null, notificationContent);
                 telegramClient.execute(telegramMessage);
-            } else if (PlatformAccount.PlatformType.max.equals(platform)) {
+            } else if (PlatformAccount.PlatformType.MAX.equals(platform)) {
                 NewMessageBody messageBody = maxResponseMapper.mapToMaxMessage(notificationContent);
                 SendMessage maxMessageRequest = SendMessage.builder()
                         .userId(globalUserId)

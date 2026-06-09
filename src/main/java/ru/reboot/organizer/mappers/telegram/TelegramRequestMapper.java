@@ -24,7 +24,7 @@ public class TelegramRequestMapper {
         }
 
         // Для Telegram chatId у UserRequest является platformUserId
-        return new UserRequest(null, String.valueOf(telegramChatId), text, PlatformAccount.PlatformType.telegram);
+        return new UserRequest(null, String.valueOf(telegramChatId), text, PlatformAccount.PlatformType.TELEGRAM);
     }
 
     public Integer extractMessageIdForEdit(Update update) {

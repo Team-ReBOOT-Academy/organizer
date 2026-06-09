@@ -14,8 +14,6 @@ import ru.SSP55.max.bots.api.objects.update.message.MessageCreatedUpdate;
 import ru.reboot.organizer.database.entity.PlatformAccount;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.dto.UserRequest;
-import ru.reboot.organizer.dto.UserScreens;
-import ru.reboot.organizer.mappers.max.MaxRequestMapper;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.services.CoreRouterService;
 import ru.reboot.organizer.services.SessionManagerService;
@@ -28,7 +26,6 @@ import ru.reboot.organizer.services.SessionManagerService;
 @Component
 @RequiredArgsConstructor
 public class MaxBotController implements MaxBotUpdateListener {
-    private final MaxRequestMapper requestMapper;
     private final MaxResponseMapper responseMapper;
     private final CoreRouterService coreRouterService;
     private final MaxClient maxClient;
@@ -37,7 +34,7 @@ public class MaxBotController implements MaxBotUpdateListener {
     @Override
     public void onBotStarted(BotStartedUpdate update) {
         Long userId = update.getUser().getUserId();
-        processUpdate(userId, null);
+        processUpdate(userId, "/start");
     }
 
     @Override
@@ -58,18 +55,24 @@ public class MaxBotController implements MaxBotUpdateListener {
         try {
             String maxUserId = String.valueOf(userId);
 
-            Long globalAppUserId = sessionManagerService.getOrCreateAppUserId(maxUserId, PlatformAccount.PlatformType.max);
-            sessionManagerService.setUserPlatform(globalAppUserId, PlatformAccount.PlatformType.max);
-            sessionManagerService.setUserScreen(globalAppUserId, UserScreens.DEFAULT_SCREEN);
+            Long globalAppUserId = sessionManagerService.getOrCreateAppUserId(maxUserId, PlatformAccount.PlatformType.MAX);
+            sessionManagerService.setUserPlatform(globalAppUserId, PlatformAccount.PlatformType.MAX);
 
-            UserRequest request = requestMapper.map(userId, incomingData);
+            String processedText = (incomingData == null || incomingData.isBlank()) ? "/start" : incomingData;
 
-            UnifiedResponse unifiedResponse = coreRouterService.route(request);
+            UserRequest internalRequest = new UserRequest(
+                    globalAppUserId,
+                    maxUserId,
+                    processedText,
+                    PlatformAccount.PlatformType.MAX
+            );
+
+            UnifiedResponse unifiedResponse = coreRouterService.route(internalRequest);
 
             NewMessageBody messageBody = responseMapper.mapToMaxMessage(unifiedResponse);
 
             SendMessage message = SendMessage.builder()
-                    .userId(userId)
+                    .userId(Long.valueOf(internalRequest.platformUserId()))
                     .body(messageBody)
                     .build();
 

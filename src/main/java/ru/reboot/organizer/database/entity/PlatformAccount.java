@@ -36,7 +36,7 @@ public class PlatformAccount
     private boolean isDeleted = false;
 
     public enum PlatformType {
-        telegram,
-        max
+        TELEGRAM,
+        MAX
     }
 }

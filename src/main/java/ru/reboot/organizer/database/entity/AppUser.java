@@ -41,7 +41,7 @@ public class AppUser
 
     @Column(name = "last_active_platform")
     @Enumerated(EnumType.STRING)
-    private PlatformAccount.PlatformType lastActivePlatform = PlatformAccount.PlatformType.telegram;
+    private PlatformAccount.PlatformType lastActivePlatform = PlatformAccount.PlatformType.TELEGRAM;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlatformAccount> accounts = new ArrayList<>();

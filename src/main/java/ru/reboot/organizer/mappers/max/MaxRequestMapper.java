@@ -14,6 +14,6 @@ public class MaxRequestMapper {
     public UserRequest map(Long maxUserId, String text) {
         String processedText = (text == null || text.isBlank()) ? "/start" : text;
 
-        return new UserRequest(null, String.valueOf(maxUserId), processedText, PlatformAccount.PlatformType.max);
+        return new UserRequest(null, String.valueOf(maxUserId), processedText, PlatformAccount.PlatformType.MAX);
     }
 }
