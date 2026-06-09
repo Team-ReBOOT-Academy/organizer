@@ -4,6 +4,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.reboot.organizer.dto.UserRequest;
 
+/**
+ * Маппер входящих сообщений для Telegram
+ */
+
 @Component
 public class TelegramRequestMapper {
     public UserRequest map (Update update) {

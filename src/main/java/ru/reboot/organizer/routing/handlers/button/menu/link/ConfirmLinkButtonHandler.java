@@ -18,7 +18,7 @@ public class ConfirmLinkButtonHandler implements ButtonHandler {
     }
 
     @Override
-    public UnifiedResponse handleButton(Long userId) {
+    public UnifiedResponse handleButton(Long userId, String payload) {
         boolean isMerged = platformLinkService.confirmLink(userId);
 
         if (isMerged) {

@@ -19,7 +19,7 @@ public class LinkPlatformButtonHandler implements ButtonHandler {
     }
 
     @Override
-    public UnifiedResponse handleButton(Long userId) {
+    public UnifiedResponse handleButton(Long userId, String payload) {
         sessionManager.setUserScreen(userId, UserScreens.LINK_PLATFORM_MENU);
 
         return UnifiedResponse.builder()

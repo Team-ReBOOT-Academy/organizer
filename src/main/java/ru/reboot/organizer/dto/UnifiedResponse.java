@@ -5,6 +5,10 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Унифицированный ответ пользователю
+ */
+
 @Data
 public class UnifiedResponse {
     private final String text;
@@ -39,7 +43,15 @@ public class UnifiedResponse {
             if (currentRow == null) {
                 row();
             }
-            currentRow.add(new BotButton(text, action));
+            currentRow.add(new BotButton(text, action.getPayload()));
+            return this;
+        }
+
+        public UnifiedResponseBuilder button(String text, String payload) {
+            if (currentRow == null) {
+                row();
+            }
+            currentRow.add(new BotButton(text, payload));
             return this;
         }
 

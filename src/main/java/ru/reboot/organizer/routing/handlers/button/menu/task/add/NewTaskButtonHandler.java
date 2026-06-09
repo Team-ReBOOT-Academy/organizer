@@ -19,7 +19,7 @@ public class NewTaskButtonHandler implements ButtonHandler {
     }
 
     @Override
-    public UnifiedResponse handleButton(Long userId) {
+    public UnifiedResponse handleButton(Long userId, String payload) {
         sessionManager.setUserScreen(userId, UserScreens.NEW_TASK_INPUT);
 
         return UnifiedResponse.builder()

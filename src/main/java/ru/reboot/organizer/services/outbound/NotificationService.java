@@ -15,11 +15,14 @@ import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
 import ru.reboot.organizer.utils.dev.SessionManager;
 
+/**
+ * Сервис отправки уведомлений пользователю
+ */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-    // Заглушка
     private final SessionManager sessionManager;
 
     private final TelegramResponseMapper telegramResponseMapper;
@@ -28,6 +31,11 @@ public class NotificationService {
     private final TelegramClient telegramClient;
     private final MaxClient maxClient;
 
+    /**
+     * Метод для отправки уведомлений пользователю
+     * @param globalUserId UserID внутри проекта
+     * @param notificationContent Тело сообщения, которое будет отправлено
+     */
     public void sendNotification(Long globalUserId, UnifiedResponse notificationContent) {
         String platform = sessionManager.getUserPlatform(globalUserId);
 

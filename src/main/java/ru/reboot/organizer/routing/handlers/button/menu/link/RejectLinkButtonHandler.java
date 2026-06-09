@@ -18,7 +18,7 @@ public class RejectLinkButtonHandler implements ButtonHandler {
     }
 
     @Override
-    public UnifiedResponse handleButton(Long userId) {
+    public UnifiedResponse handleButton(Long userId, String payload) {
         platformLinkService.rejectLink(userId);
 
         return UnifiedResponse.builder()

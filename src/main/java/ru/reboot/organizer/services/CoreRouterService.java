@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Центральный сервис выбора обработчика экрана
+ */
+
 @Slf4j
 @Service
 public class CoreRouterService {
@@ -45,6 +49,8 @@ public class CoreRouterService {
         String text = request.text();
 
         if ("/start".equals(text) || "СТАРТ".equalsIgnoreCase(text)) {
+            return buildHelloMessage(userId);
+        } else if ("/menu".equals(text)) {
             return buildMainMenu(userId);
         }
 
@@ -52,7 +58,7 @@ public class CoreRouterService {
         if (button != null) {
             ButtonHandler handler = buttonHandlers.get(button);
             if (handler != null) {
-                return handler.handleButton(userId);
+                return handler.handleButton(userId, text);
             }
         }
 
@@ -63,6 +69,16 @@ public class CoreRouterService {
         }
 
         return buildMainMenu(userId);
+    }
+
+    private UnifiedResponse buildHelloMessage(Long userId) {
+        sessionManager.setUserScreen(userId, UserScreens.DEFAULT_SCREEN);
+
+        return UnifiedResponse.builder()
+                .text("Вы начали общение с ботом, перейдите в главное меню")
+                .row()
+                .button("В главное меню", ButtonType.MAIN_MENU)
+                .build();
     }
 
     private UnifiedResponse buildMainMenu(Long userId) {

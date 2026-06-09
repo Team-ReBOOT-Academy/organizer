@@ -18,6 +18,10 @@ import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.services.CoreRouterService;
 import ru.reboot.organizer.utils.dev.SessionManager;
 
+/**
+ * Класс-контроллер для бота в MAX
+ */
+
 @Slf4j
 @Component
 @RequiredArgsConstructor

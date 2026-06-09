@@ -10,6 +10,10 @@ import ru.reboot.organizer.dto.UnifiedResponse;
 
 import java.util.List;
 
+/**
+ * Маппер исходящих сообщений для MAX
+ */
+
 @Component
 public class MaxResponseMapper {
     public NewMessageBody mapToMaxMessage(UnifiedResponse response) {
@@ -21,7 +25,7 @@ public class MaxResponseMapper {
                     .map(row -> row.stream()
                             .map(btn -> (ButtonRequest) new CallbackButtonRequest(
                                     btn.text(),
-                                    btn.action().getPayload()
+                                    btn.action()
                             )).toList()
                     ).toList();
 

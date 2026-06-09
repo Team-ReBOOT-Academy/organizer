@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Сервис для подключения платформ
+ */
+
 @Service
 @RequiredArgsConstructor
 public class PlatformLinkService {

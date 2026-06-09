@@ -1,3 +1,9 @@
 package ru.reboot.organizer.dto;
 
-public record BotButton(String text, ButtonType action) {}
+/**
+ * Класс inline-кнопки
+ * @param text содержимое кнопки
+ * @param action callback-параметр
+ */
+
+public record BotButton(String text, String action) {}

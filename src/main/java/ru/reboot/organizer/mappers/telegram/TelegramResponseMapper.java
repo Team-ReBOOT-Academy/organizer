@@ -12,6 +12,10 @@ import ru.reboot.organizer.dto.UnifiedResponse;
 
 import java.util.List;
 
+/**
+ * Маппер исходящих сообщений для Telegram
+ */
+
 @Component
 public class TelegramResponseMapper {
     public BotApiMethod<?> map(Long chatId, Integer messageId, UnifiedResponse response) {
@@ -45,7 +49,7 @@ public class TelegramResponseMapper {
                     row.forEach(btn -> tgRow.add(
                             InlineKeyboardButton.builder()
                                     .text(btn.text())
-                                    .callbackData(btn.action().getPayload())
+                                    .callbackData(btn.action())
                                     .build()
                     ));
 

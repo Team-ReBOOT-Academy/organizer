@@ -19,7 +19,7 @@ public class EnterCodeButtonHandler implements ButtonHandler {
     }
 
     @Override
-    public UnifiedResponse handleButton(Long userId) {
+    public UnifiedResponse handleButton(Long userId, String payload) {
         sessionManager.setUserScreen(userId, UserScreens.PLATFORM_LINK_INPUT);
 
         return UnifiedResponse.builder()

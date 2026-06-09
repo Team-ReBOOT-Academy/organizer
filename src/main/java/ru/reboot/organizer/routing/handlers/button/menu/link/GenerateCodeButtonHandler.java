@@ -18,7 +18,7 @@ public class GenerateCodeButtonHandler implements ButtonHandler {
     }
 
     @Override
-    public UnifiedResponse handleButton(Long userId) {
+    public UnifiedResponse handleButton(Long userId, String payload) {
         String code = platformLinkService.getOrGenerateCodeForUser(userId);
 
         return UnifiedResponse.builder()
