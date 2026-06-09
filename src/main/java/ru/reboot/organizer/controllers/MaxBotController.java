@@ -16,7 +16,7 @@ import ru.reboot.organizer.dto.UserRequest;
 import ru.reboot.organizer.mappers.max.MaxRequestMapper;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.services.CoreRouterService;
-import ru.reboot.organizer.utils.dev.SessionManager;
+import ru.reboot.organizer.services.SessionManager;
 
 /**
  * Класс-контроллер для бота в MAX

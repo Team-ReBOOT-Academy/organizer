@@ -15,7 +15,7 @@ import ru.reboot.organizer.dto.UserRequest;
 import ru.reboot.organizer.mappers.telegram.TelegramRequestMapper;
 import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
 import ru.reboot.organizer.services.CoreRouterService;
-import ru.reboot.organizer.utils.dev.SessionManager;
+import ru.reboot.organizer.services.SessionManager;
 
 /**
  * Класс-контроллер для Telegram бота

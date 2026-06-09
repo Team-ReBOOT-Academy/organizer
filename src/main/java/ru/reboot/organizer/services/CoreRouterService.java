@@ -6,10 +6,11 @@ import ru.reboot.organizer.dto.ButtonType;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.dto.UserRequest;
 import ru.reboot.organizer.routing.ButtonHandler;
+import ru.reboot.organizer.routing.CommandHandler;
 import ru.reboot.organizer.routing.ScreenHandler;
-import ru.reboot.organizer.utils.dev.SessionManager;
-import ru.reboot.organizer.utils.dev.UserScreens;
+import ru.reboot.organizer.utils.MessageManager;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,16 +24,21 @@ import java.util.stream.Collectors;
 @Service
 public class CoreRouterService {
     private final SessionManager sessionManager;
+    private final MessageManager messageManager;
 
     private final Map<String, ScreenHandler> screenHandlers;
     private final Map<ButtonType, ButtonHandler> buttonHandlers;
+    private final Map<String, CommandHandler> commandHandlers;
 
     public CoreRouterService(
             SessionManager sessionManager,
+            MessageManager messageManager,
             List<ScreenHandler> screenHandlersList,
-            List<ButtonHandler> buttonHandlersList
+            List<ButtonHandler> buttonHandlersList,
+            List<CommandHandler> commandHandlersList
     ) {
         this.sessionManager = sessionManager;
+        this.messageManager = messageManager;
 
         this.screenHandlers = screenHandlersList.stream()
                 .collect(Collectors.toMap(ScreenHandler::getHandledScreen, Function.identity()));
@@ -40,57 +46,58 @@ public class CoreRouterService {
         this.buttonHandlers = buttonHandlersList.stream()
                 .collect(Collectors.toMap(ButtonHandler::getHandledButton, Function.identity()));
 
-        log.info("CoreRouterService инициализирован. Обнаружено экранов: {}, кнопок: {}",
-                screenHandlers.size(), buttonHandlers.size());
+        this.commandHandlers = new HashMap<>();
+        for (CommandHandler handler : commandHandlersList) {
+            for (String cmd : handler.getHandledCommands()) {
+                this.commandHandlers.put(cmd.toLowerCase(), handler);
+            }
+        }
+
+        log.info("CoreRouterService инициализирован. Обнаружено экранов ввода: {}, экранов с кнопками: {}, команд: {}",
+                screenHandlers.size(), buttonHandlers.size(), commandHandlers.size());
     }
 
     public UnifiedResponse route(UserRequest request) {
         Long userId = request.globalUserId();
         String text = request.text();
 
-        if ("/start".equals(text) || "СТАРТ".equalsIgnoreCase(text)) {
-            return buildHelloMessage(userId);
-        } else if ("/menu".equals(text)) {
-            return buildMainMenu(userId);
+        if (text == null || text.trim().isEmpty()) {
+            return fallback(userId);
         }
 
-        ButtonType button = ButtonType.fromPayload(text);
+        String cleanText = text.trim();
+        if (cleanText.startsWith("/")) {
+            String baseCommand = cleanText.split(" ")[0].toLowerCase();
+
+            CommandHandler commandHandler = commandHandlers.get(baseCommand);
+            if (commandHandler != null) {
+                return commandHandler.handleCommand(userId, cleanText);
+            } else {
+                return fallback(userId);
+            }
+        }
+
+        ButtonType button = ButtonType.fromPayload(cleanText);
         if (button != null) {
             ButtonHandler handler = buttonHandlers.get(button);
             if (handler != null) {
-                return handler.handleButton(userId, text);
+                return handler.handleButton(userId, cleanText);
             }
         }
 
         String currentScreen = sessionManager.getUserScreen(userId);
         ScreenHandler handler = screenHandlers.get(currentScreen);
         if (handler != null) {
-            return handler.handleText(userId, text);
+            return handler.handleText(userId, cleanText);
         }
 
-        return buildMainMenu(userId);
+        return fallback(userId);
     }
 
-    private UnifiedResponse buildHelloMessage(Long userId) {
-        sessionManager.setUserScreen(userId, UserScreens.DEFAULT_SCREEN);
-
+    private UnifiedResponse fallback(Long userId) {
         return UnifiedResponse.builder()
-                .text("Вы начали общение с ботом, перейдите в главное меню")
-                .row()
-                .button("В главное меню", ButtonType.MAIN_MENU)
-                .build();
-    }
-
-    private UnifiedResponse buildMainMenu(Long userId) {
-        sessionManager.setUserScreen(userId, UserScreens.MAIN_MENU);
-
-        return UnifiedResponse.builder()
-                .text("Главное меню")
-                .row()
-                .button("Новая задача", ButtonType.NEW_TASK)
-                .button("Мои задачи", ButtonType.TASK_LIST)
-                .row()
-                .button("Подключить платформу", ButtonType.LINK_PLATFORM)
+                .text(messageManager.getMessage("error.fallback"))
+                .row().button(messageManager.getMessage("button.menu"), ButtonType.MAIN_MENU.getPayload())
                 .build();
     }
 }

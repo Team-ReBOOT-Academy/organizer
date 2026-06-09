@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface PlatformAccountRepository extends JpaRepository<PlatformAccount, Long> {
-    Optional<PlatformAccount> findByPlatformUserId(Long platformUserId);
+    Optional<PlatformAccount> findByPlatformUserId(String platformUserId);
 }

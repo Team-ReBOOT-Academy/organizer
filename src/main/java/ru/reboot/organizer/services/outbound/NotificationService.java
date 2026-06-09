@@ -13,7 +13,7 @@ import ru.SSP55.max.bots.api.objects.newmessagebody.NewMessageBody;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
-import ru.reboot.organizer.utils.dev.SessionManager;
+import ru.reboot.organizer.services.SessionManager;
 
 /**
  * Сервис отправки уведомлений пользователю
