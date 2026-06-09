@@ -11,12 +11,14 @@ import ru.SSP55.max.bots.api.objects.newmessagebody.NewMessageBody;
 import ru.SSP55.max.bots.api.objects.update.bot.BotStartedUpdate;
 import ru.SSP55.max.bots.api.objects.update.message.MessageCallbackUpdate;
 import ru.SSP55.max.bots.api.objects.update.message.MessageCreatedUpdate;
+import ru.reboot.organizer.database.entity.PlatformAccount;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.dto.UserRequest;
+import ru.reboot.organizer.dto.UserScreens;
 import ru.reboot.organizer.mappers.max.MaxRequestMapper;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.services.CoreRouterService;
-import ru.reboot.organizer.services.SessionManager;
+import ru.reboot.organizer.services.SessionManagerService;
 
 /**
  * Класс-контроллер для бота в MAX
@@ -30,8 +32,7 @@ public class MaxBotController implements MaxBotUpdateListener {
     private final MaxResponseMapper responseMapper;
     private final CoreRouterService coreRouterService;
     private final MaxClient maxClient;
-    // Заглушка
-    private final SessionManager sessionManager;
+    private final SessionManagerService sessionManagerService;
 
     @Override
     public void onBotStarted(BotStartedUpdate update) {
@@ -55,10 +56,14 @@ public class MaxBotController implements MaxBotUpdateListener {
 
     private void processUpdate(Long userId, String incomingData) {
         try {
+            String maxUserId = String.valueOf(userId);
+
+            Long globalAppUserId = sessionManagerService.getOrCreateAppUserId(maxUserId, PlatformAccount.PlatformType.max);
+            sessionManagerService.setUserPlatform(globalAppUserId, PlatformAccount.PlatformType.max);
+            sessionManagerService.setUserScreen(globalAppUserId, UserScreens.DEFAULT_SCREEN);
+
             UserRequest request = requestMapper.map(userId, incomingData);
 
-            // Заглушка
-            sessionManager.setUserPlatform(userId, "MAX");
             UnifiedResponse unifiedResponse = coreRouterService.route(request);
 
             NewMessageBody messageBody = responseMapper.mapToMaxMessage(unifiedResponse);

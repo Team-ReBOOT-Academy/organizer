@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.reboot.organizer.utils.dev.UserScreens;
+import ru.reboot.organizer.dto.UserScreens;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +38,10 @@ public class AppUser
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "last_active_platform")
+    @Enumerated(EnumType.STRING)
+    private PlatformAccount.PlatformType lastActivePlatform = PlatformAccount.PlatformType.telegram;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlatformAccount> accounts = new ArrayList<>();

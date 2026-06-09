@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.reboot.organizer.dto.ButtonType;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.dto.UserRequest;
+import ru.reboot.organizer.dto.UserScreens;
 import ru.reboot.organizer.routing.ButtonHandler;
 import ru.reboot.organizer.routing.CommandHandler;
 import ru.reboot.organizer.routing.ScreenHandler;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CoreRouterService {
-    private final SessionManager sessionManager;
+    private final SessionManagerService sessionManagerService;
     private final MessageManager messageManager;
 
     private final Map<String, ScreenHandler> screenHandlers;
@@ -31,13 +32,13 @@ public class CoreRouterService {
     private final Map<String, CommandHandler> commandHandlers;
 
     public CoreRouterService(
-            SessionManager sessionManager,
+            SessionManagerService sessionManagerService,
             MessageManager messageManager,
             List<ScreenHandler> screenHandlersList,
             List<ButtonHandler> buttonHandlersList,
             List<CommandHandler> commandHandlersList
     ) {
-        this.sessionManager = sessionManager;
+        this.sessionManagerService = sessionManagerService;
         this.messageManager = messageManager;
 
         this.screenHandlers = screenHandlersList.stream()
@@ -58,7 +59,7 @@ public class CoreRouterService {
     }
 
     public UnifiedResponse route(UserRequest request) {
-        Long userId = request.globalUserId();
+        Long userId = request.userId();
         String text = request.text();
 
         if (text == null || text.trim().isEmpty()) {
@@ -85,7 +86,7 @@ public class CoreRouterService {
             }
         }
 
-        String currentScreen = sessionManager.getUserScreen(userId);
+        String currentScreen = sessionManagerService.getUserScreen(userId);
         ScreenHandler handler = screenHandlers.get(currentScreen);
         if (handler != null) {
             return handler.handleText(userId, cleanText);
@@ -95,6 +96,8 @@ public class CoreRouterService {
     }
 
     private UnifiedResponse fallback(Long userId) {
+        sessionManagerService.setUserScreen(userId, UserScreens.FALLBACK);
+
         return UnifiedResponse.builder()
                 .text(messageManager.getMessage("error.fallback"))
                 .row().button(messageManager.getMessage("button.menu"), ButtonType.MAIN_MENU.getPayload())

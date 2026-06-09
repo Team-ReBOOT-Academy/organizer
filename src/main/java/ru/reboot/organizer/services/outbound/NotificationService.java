@@ -10,10 +10,11 @@ import ru.SSP55.max.bots.api.client.MaxClient;
 import ru.SSP55.max.bots.api.exceptions.MaxApiException;
 import ru.SSP55.max.bots.api.methods.post.sendmessage.SendMessage;
 import ru.SSP55.max.bots.api.objects.newmessagebody.NewMessageBody;
+import ru.reboot.organizer.database.entity.PlatformAccount;
 import ru.reboot.organizer.dto.UnifiedResponse;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
-import ru.reboot.organizer.services.SessionManager;
+import ru.reboot.organizer.services.SessionManagerService;
 
 /**
  * Сервис отправки уведомлений пользователю
@@ -23,7 +24,7 @@ import ru.reboot.organizer.services.SessionManager;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-    private final SessionManager sessionManager;
+    private final SessionManagerService sessionManagerService;
 
     private final TelegramResponseMapper telegramResponseMapper;
     private final MaxResponseMapper maxResponseMapper;
@@ -31,19 +32,14 @@ public class NotificationService {
     private final TelegramClient telegramClient;
     private final MaxClient maxClient;
 
-    /**
-     * Метод для отправки уведомлений пользователю
-     * @param globalUserId UserID внутри проекта
-     * @param notificationContent Тело сообщения, которое будет отправлено
-     */
     public void sendNotification(Long globalUserId, UnifiedResponse notificationContent) {
-        String platform = sessionManager.getUserPlatform(globalUserId);
+        PlatformAccount.PlatformType platform = sessionManagerService.getUserPlatform(globalUserId);
 
         try {
-            if ("TELEGRAM".equals(platform)) {
+            if (PlatformAccount.PlatformType.telegram.equals(platform)) {
                 BotApiMethod<?> telegramMessage = telegramResponseMapper.map(globalUserId, null, notificationContent);
                 telegramClient.execute(telegramMessage);
-            } else if ("MAX".equals(platform)) {
+            } else if (PlatformAccount.PlatformType.max.equals(platform)) {
                 NewMessageBody messageBody = maxResponseMapper.mapToMaxMessage(notificationContent);
                 SendMessage maxMessageRequest = SendMessage.builder()
                         .userId(globalUserId)

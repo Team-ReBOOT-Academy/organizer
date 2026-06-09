@@ -1,8 +1,9 @@
-package ru.reboot.organizer.utils.dev;
+package ru.reboot.organizer.dto;
 
 public class UserScreens {
     public final static String DEFAULT_SCREEN = "DEFAULT_SCREEN";
     public final static String MAIN_MENU = "MAIN_MENU";
+    public final static String FALLBACK = "FALLBACK";
 
     public final static String NEW_TASK_INPUT_THEME = "NEW_TASK_INPUT_THEME";
     public final static String NEW_TASK_INPUT_DESCRIPTION = "NEW_TASK_INPUT_DESCRIPTION";

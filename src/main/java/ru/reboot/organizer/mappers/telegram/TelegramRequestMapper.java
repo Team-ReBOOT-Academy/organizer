@@ -2,6 +2,7 @@ package ru.reboot.organizer.mappers.telegram;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.reboot.organizer.database.entity.PlatformAccount;
 import ru.reboot.organizer.dto.UserRequest;
 
 /**
@@ -11,18 +12,18 @@ import ru.reboot.organizer.dto.UserRequest;
 @Component
 public class TelegramRequestMapper {
     public UserRequest map (Update update) {
-        Long chatId = -1L;
+        Long userId = -1L;
         String text = "";
 
         if (update.hasMessage() && update.getMessage().hasText()) {
-            chatId = update.getMessage().getChatId();
+            userId = update.getMessage().getFrom().getId();
             text = update.getMessage().getText();
         } else if (update.hasCallbackQuery()) {
-            chatId = update.getCallbackQuery().getMessage().getChatId();
+            userId = update.getCallbackQuery().getFrom().getId();
             text = update.getCallbackQuery().getData();
         }
 
-        return new UserRequest(chatId, text, "TELEGRAM");
+        return new UserRequest(null, String.valueOf(userId), text, PlatformAccount.PlatformType.telegram);
     }
 
     public Integer extractMessageIdForEdit(Update update) {
