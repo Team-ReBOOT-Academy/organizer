@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Deprecated
 public class MockTaskService {
     private final Map<Long, List<MockTask>> userTasks = new ConcurrentHashMap<>();
     private long idCounter = 1;
@@ -24,6 +25,7 @@ public class MockTaskService {
         private boolean isCompleted;
     }
 
+    @Deprecated
     public List<MockTask> getTasksForUser(Long userId) {
         return userTasks.computeIfAbsent(userId, id -> {
             List<MockTask> tasks = new ArrayList<>();
@@ -34,6 +36,7 @@ public class MockTaskService {
         });
     }
 
+    @Deprecated
     public MockTask getTaskById(Long userId, Long taskId) {
         return getTasksForUser(userId).stream()
                 .filter(t -> t.getId().equals(taskId))

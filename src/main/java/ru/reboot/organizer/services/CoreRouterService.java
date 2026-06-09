@@ -59,7 +59,7 @@ public class CoreRouterService {
     }
 
     public UnifiedResponse route(UserRequest request) {
-        Long userId = request.userId();
+        Long userId = request.globalUserId();
         String text = request.text();
 
         if (text == null || text.trim().isEmpty()) {
