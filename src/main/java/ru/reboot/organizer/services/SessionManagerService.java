@@ -1,5 +1,6 @@
 package ru.reboot.organizer.services;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import ru.reboot.organizer.database.repository.PlatformAccountRepository;
 import ru.reboot.organizer.dto.UserScreens;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -68,5 +71,23 @@ public class SessionManagerService {
         platformAccountRepository.save(account);
 
         return savedUser.getId();
+    }
+
+    @Data
+    public static class TaskDraft {
+        private String title;
+        private String description;
+        private LocalDateTime deadline;
+        private boolean isImportant;
+    }
+
+    private final Map<Long, TaskDraft> drafts = new ConcurrentHashMap<>();
+
+    public TaskDraft getOrCreateDraft(Long globalUserId) {
+        return drafts.computeIfAbsent(globalUserId, id -> new TaskDraft());
+    }
+
+    public void clearDraft(Long globalUserId) {
+        drafts.remove(globalUserId);
     }
 }

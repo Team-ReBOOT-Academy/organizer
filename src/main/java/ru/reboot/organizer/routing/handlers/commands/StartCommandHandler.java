@@ -24,6 +24,7 @@ public class StartCommandHandler implements CommandHandler {
 
     @Override
     public UnifiedResponse handleCommand(Long userId, String text) {
+        sessionManagerService.clearDraft(userId);
         sessionManagerService.setUserScreen(userId, UserScreens.DEFAULT_SCREEN);
 
         return UnifiedResponse.builder()

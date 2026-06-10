@@ -11,27 +11,24 @@ import ru.reboot.organizer.utils.MessageManager;
 
 @Component
 @RequiredArgsConstructor
-public class MainMenuButtonHandler implements ButtonHandler {
-    private final MessageManager messageManager;
+public class NewTaskButtonHandler implements ButtonHandler {
     private final SessionManagerService sessionManagerService;
+    private final MessageManager messageManager;
 
     @Override
     public ButtonType getHandledButton() {
-        return ButtonType.MAIN_MENU;
+        return ButtonType.NEW_TASK_INPUT_THEME;
     }
 
     @Override
     public UnifiedResponse handleButton(Long userId, String payload) {
         sessionManagerService.clearDraft(userId);
-        sessionManagerService.setUserScreen(userId, UserScreens.MAIN_MENU);
+
+        sessionManagerService.setUserScreen(userId, UserScreens.NEW_TASK_INPUT_THEME);
 
         return UnifiedResponse.builder()
-                .text(messageManager.getMessage("menu.header"))
-                .row()
-                    .button(messageManager.getMessage("button.task.new"), ButtonType.NEW_TASK_INPUT_THEME.getPayload())
-                    .button(messageManager.getMessage("button.menu.task.list"), ButtonType.TASK_LIST.getPayload())
-                .row()
-                    .button(messageManager.getMessage("button.menu.connection"), ButtonType.LINK_PLATFORM.getPayload())
+                .text(messageManager.getMessage("task.new.title"))
+                .row().button(messageManager.getMessage("button.menu"), ButtonType.MAIN_MENU.getPayload())
                 .build();
     }
 }

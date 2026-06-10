@@ -10,7 +10,11 @@ import lombok.Getter;
 public enum ButtonType {
     MAIN_MENU("btn_main_menu"),
 
-    NEW_TASK("btn_new_task"),
+    NEW_TASK_INPUT_THEME("btn_new_task_input_theme"),
+    NEW_TASK_INPUT_DESCRIPTION("btn_new_task_input_description"),
+    NEW_TASK_SKIP_DESCRIPTION("btn_new_task_skip_description"),
+    NEW_TASK_CANCEL("btn_new_task_cancel"),
+
     TASK_LIST("btn_task_list"),
     LINK_PLATFORM("btn_link_platform"),
 

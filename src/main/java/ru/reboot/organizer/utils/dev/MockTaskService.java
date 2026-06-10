@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Тестовый Mock сервис для заполнения списка задач
+ */
+
 @Service
 @Deprecated
 public class MockTaskService {
