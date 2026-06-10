@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
+@Deprecated
 public class PlatformLinkService {
     private final String alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private final int codeLength = 6;
@@ -26,6 +26,7 @@ public class PlatformLinkService {
 
     private final Map<Long, Long> pendingConfirmations = new ConcurrentHashMap<>();
 
+    @Deprecated
     public String getOrGenerateCodeForUser(Long globalUserId) {
         for (Map.Entry<String, Long> entry : mockDatabase.entrySet()) {
             if (entry.getValue().equals(globalUserId)) {
@@ -42,6 +43,7 @@ public class PlatformLinkService {
         return newCode;
     }
 
+    @Deprecated
     public boolean confirmLink(Long creatorUserId) {
         Long targetUserId = pendingConfirmations.remove(creatorUserId);
         if (targetUserId != null) {
@@ -51,12 +53,14 @@ public class PlatformLinkService {
         return false;
     }
 
+    @Deprecated
     public void rejectLink(Long creatorUserId) {
         // Заглушка
         pendingConfirmations.remove(creatorUserId);
     }
 
     // Заглушка
+    @Deprecated
     public LinkAttemptResult linkAccountByCode(Long currentGlobalUserId, String inputCode) {
         if (!mockDatabase.containsKey(inputCode)) {
             return new LinkAttemptResult(LinkResult.INVALID, null);
@@ -74,6 +78,7 @@ public class PlatformLinkService {
         return new LinkAttemptResult(LinkResult.PENDING_CONFIRMATION, creatorUserId);
     }
 
+    @Deprecated
     private String generateRandomCode() {
         StringBuilder sb = new StringBuilder(codeLength);
         for (int i = 0; i < codeLength; i++) {

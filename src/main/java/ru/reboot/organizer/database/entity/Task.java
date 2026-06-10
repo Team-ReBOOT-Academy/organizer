@@ -24,6 +24,21 @@ public class Task
     @JoinColumn(name = "app_user_id", nullable = false)
     private AppUser appUser;
 
-    private String text;
+    @Column(nullable = false)
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "deadline")
+    private LocalDateTime deadline;
+
+    @Column(name = "is_important", nullable = false)
+    private boolean isImportant = false;
+
+    @Column(name = "is_completed", nullable = false)
     private boolean isCompleted = false;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

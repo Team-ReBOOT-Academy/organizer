@@ -33,7 +33,7 @@ public class SessionManagerService {
     public void setUserScreen(Long appUserId, String screen) {
         appUserRepository.findById(appUserId).ifPresent(user -> {
             user.setCurrentScreen(screen);
-            appUserRepository.save(user); // Благодаря @Transactional изменения улетят в БД
+            appUserRepository.save(user);
         });
     }
 

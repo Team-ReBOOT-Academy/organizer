@@ -13,6 +13,10 @@ public enum ButtonType {
     NEW_TASK_INPUT_THEME("btn_new_task_input_theme"),
     NEW_TASK_INPUT_DESCRIPTION("btn_new_task_input_description"),
     NEW_TASK_SKIP_DESCRIPTION("btn_new_task_skip_description"),
+    NEW_TASK_INPUT_DEADLINE("btn_new_task_input_deadline"),
+    NEW_TASK_SKIP_DEADLINE("btn_new_task_skip_deadline"),
+    NEW_TASK_IMPORTANT_YES("btn_new_task_important_yes"),
+    NEW_TASK_IMPORTANT_NO("btn_new_task_important_no"),
     NEW_TASK_CANCEL("btn_new_task_cancel"),
 
     TASK_LIST("btn_task_list"),
