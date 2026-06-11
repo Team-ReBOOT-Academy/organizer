@@ -6,6 +6,7 @@ import ru.SSP55.max.bots.api.objects.newmessagebody.attachments.AttachmentReques
 import ru.SSP55.max.bots.api.objects.newmessagebody.attachments.buttons.ButtonRequest;
 import ru.SSP55.max.bots.api.objects.newmessagebody.attachments.buttons.CallbackButtonRequest;
 import ru.SSP55.max.bots.api.objects.newmessagebody.attachments.payloads.InlineKeyboardAttachmentRequestPayload;
+import ru.SSP55.max.bots.api.objects.newmessagebody.format.TextFormat;
 import ru.reboot.organizer.dto.UnifiedResponse;
 
 import java.util.List;
@@ -18,7 +19,8 @@ import java.util.List;
 public class MaxResponseMapper {
     public NewMessageBody mapToMaxMessage(UnifiedResponse response) {
         var builder = NewMessageBody.builder()
-                .text(response.getText());
+                .text(response.getText())
+                .format(TextFormat.MARKDOWN);
 
         if (response.getInlineKeyboard() != null && !response.getInlineKeyboard().isEmpty()) {
             List<List<ButtonRequest>> maxKeyboardRows = response.getInlineKeyboard().stream()

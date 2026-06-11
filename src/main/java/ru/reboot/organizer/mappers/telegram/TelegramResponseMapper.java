@@ -27,6 +27,7 @@ public class TelegramResponseMapper {
                     .messageId(messageId)
                     .text(response.getText())
                     .replyMarkup(keyboard)
+                    .parseMode("Markdown")
                     .build();
         }
 
@@ -34,6 +35,7 @@ public class TelegramResponseMapper {
                 .chatId(chatId)
                 .text(response.getText())
                 .replyMarkup(keyboard)
+                .parseMode("Markdown")
                 .build();
     }
 
