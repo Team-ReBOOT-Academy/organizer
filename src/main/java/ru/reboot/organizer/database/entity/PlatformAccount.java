@@ -12,9 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@Table(name = "platform_accounts", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"platform", "platform_user_id"})
-})
+@Table(name = "platform_accounts",
+       uniqueConstraints = {@UniqueConstraint(columnNames = {"platform", "platform_user_id"})})
+
 public class PlatformAccount
 {
     @Id
@@ -22,7 +22,7 @@ public class PlatformAccount
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_platform_account_user"))
     private AppUser appUser;
 
     @Column(name = "platform", nullable = false)

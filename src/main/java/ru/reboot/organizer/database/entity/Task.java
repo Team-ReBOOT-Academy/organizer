@@ -21,7 +21,7 @@ public class Task
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "app_user_id", nullable = false)
+    @JoinColumn(name = "app_user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_task_user"))
     private AppUser appUser;
 
     @Column(nullable = false)

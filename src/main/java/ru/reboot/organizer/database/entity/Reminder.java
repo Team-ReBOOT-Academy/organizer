@@ -19,7 +19,7 @@ public class Reminder
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false)
+    @JoinColumn(name = "task_id", nullable = false, foreignKey = @ForeignKey(name = "fk_reminder_task"))
     private Task task;
 
     @Column(name = "reminder_time", nullable = false)
