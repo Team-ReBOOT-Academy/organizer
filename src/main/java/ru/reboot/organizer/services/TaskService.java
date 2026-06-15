@@ -1,6 +1,8 @@
 package ru.reboot.organizer.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.reboot.organizer.database.entity.AppUser;
@@ -40,5 +42,14 @@ public class TaskService {
         taskRepository.save(task);
 
         sessionManagerService.clearDraft(userId);
+    }
+
+    @Transactional
+    public Page<Task> getImportantTasks(Long userId, int pageNumber) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findByAppUserAndIsImportantTrueAndIsCompletedFalseOrderByCreatedAtDesc(
+                appUser, PageRequest.of(pageNumber, 5));
     }
 }

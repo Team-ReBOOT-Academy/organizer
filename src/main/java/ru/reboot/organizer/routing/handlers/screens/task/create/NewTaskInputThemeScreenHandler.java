@@ -32,7 +32,7 @@ public class NewTaskInputThemeScreenHandler implements ScreenHandler {
                 .row()
                     .button(messageManager.getMessage("button.task.new.description.skip"), ButtonType.NEW_TASK_SKIP_DESCRIPTION.getPayload())
                 .row()
-                    .button(messageManager.getMessage("button.task.cancel"), ButtonType.MAIN_MENU.getPayload())
+                    .button(messageManager.getMessage("button.task.new.cancel"), ButtonType.MAIN_MENU.getPayload())
                 .build();
     }
 }

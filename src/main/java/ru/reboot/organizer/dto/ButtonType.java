@@ -8,6 +8,7 @@ import lombok.Getter;
 
 @Getter
 public enum ButtonType {
+    // Статические кнопки
     MAIN_MENU("btn_main_menu"),
 
     NEW_TASK_INPUT_THEME("btn_new_task_input_theme"),
@@ -19,19 +20,21 @@ public enum ButtonType {
     NEW_TASK_IMPORTANT_NO("btn_new_task_important_no"),
     NEW_TASK_CANCEL("btn_new_task_cancel"),
 
-    TASK_LIST("btn_task_list"),
-    LINK_PLATFORM("btn_link_platform"),
+    TASK_LIST_CATEGORIES("btn_task_list_categories"),
+    TASK_LIST_CATEGORY_IMPORTANT("btn_task_list_category_important"),
+    TASK_LIST_CATEGORY_OTHERS("btn_task_list_category_others"),
+    TASK_LIST_CATEGORY_COMPLETED("btn_task_list_category_completed"),
 
-    PAGE_TASKS("btn_page_tasks_"),
-    VIEW_TASK("btn_view_task_"),
-    TOGGLE_IMPORTANT("btn_important_"),
-    COMPLETE_TASK("btn_complete_"),
-    DELETE_TASK("btn_delete_"),
+    LINK_PLATFORM("btn_link_platform"),
 
     GENERATE_LINK_CODE("btn_generate_link_code"),
     ENTER_LINK_CODE("btn_enter_link_code"),
     CONFIRM_LINK("btn_confirm_link"),
-    REJECT_LINK("btn_reject_link");
+    REJECT_LINK("btn_reject_link"),
+
+    // Динамические кнопки
+    TASK_LIST_PAGE_TASKS("btn_task_list_page_tasks_"),
+    TASK_LIST_VIEW_TASK("btn_task_list_view_task_");
 
     private final String payload;
 
