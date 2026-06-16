@@ -10,7 +10,6 @@ import ru.reboot.organizer.routing.ButtonHandler;
 import ru.reboot.organizer.services.TaskService;
 import ru.reboot.organizer.utils.MessageManager;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -18,7 +17,6 @@ import java.util.List;
 public class TaskPaginationButtonHandler implements ButtonHandler {
     private final TaskService taskService;
     private final MessageManager messageManager;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @Override
     public ButtonType getHandledButton() {
@@ -36,12 +34,23 @@ public class TaskPaginationButtonHandler implements ButtonHandler {
         String headerMessageKey = "";
         String emptyMessageKey = "";
 
-        if (category.equals("imp")) {
-            tasksPage = taskService.getImportantTasks(userId, page);
-            headerMessageKey = "task.list.category.important.header";
-            emptyMessageKey = "task.list.category.important.empty";
+        switch (category) {
+            case "imp" -> {
+                tasksPage = taskService.getImportantTasks(userId, page);
+                headerMessageKey = "task.list.category.important.header";
+                emptyMessageKey = "task.list.category.important.empty";
+            }
+            case "cmp" -> {
+                tasksPage = taskService.getCompletedTasks(userId, page);
+                headerMessageKey = "task.list.category.completed.header";
+                emptyMessageKey = "task.list.category.completed.empty";
+            }
+            case "oth" -> {
+                tasksPage = taskService.getOtherTasks(userId, page);
+                headerMessageKey = "task.list.category.others.header";
+                emptyMessageKey = "task.list.category.others.empty";
+            }
         }
-        // TODO: добавить остальные категории
 
         if (tasksPage == null || tasksPage.isEmpty()) {
             return UnifiedResponse.builder()

@@ -19,6 +19,8 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final SessionManagerService sessionManagerService;
 
+    private final int PAGE_SIZE = 5;
+
     @Transactional
     public void createTaskFromDraft(Long userId, boolean isImportant) {
         AppUser appUser = appUserRepository.findById(userId)
@@ -50,6 +52,26 @@ public class TaskService {
                 .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
 
         return taskRepository.findByAppUserAndIsImportantTrueAndIsCompletedFalseOrderByCreatedAtDesc(
-                appUser, PageRequest.of(pageNumber, 5));
+                appUser, PageRequest.of(pageNumber, PAGE_SIZE));
+    }
+
+    @Transactional
+    public Page<Task> getCompletedTasks(Long userId, int pageNumber) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findByAppUserAndIsCompletedTrueOrderByCreatedAtDesc(
+                appUser, PageRequest.of(pageNumber, PAGE_SIZE)
+        );
+    }
+
+    @Transactional
+    public Page<Task> getOtherTasks(Long userId, int pageNumber) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findByAppUserAndIsImportantFalseAndIsCompletedFalseOrderByCreatedAtDesc(
+                appUser, PageRequest.of(pageNumber, PAGE_SIZE)
+        );
     }
 }
