@@ -29,7 +29,7 @@ public class NewTaskSkipDeadlineButtonHandler implements ButtonHandler {
                 .row()
                 .button(messageManager.getMessage("button.task.new.important.yes"), ButtonType.NEW_TASK_IMPORTANT_YES.getPayload())
                 .button(messageManager.getMessage("button.task.new.important.no"), ButtonType.NEW_TASK_IMPORTANT_NO.getPayload())
-                .row().button(messageManager.getMessage("button.task.cancel"), ButtonType.MAIN_MENU.getPayload())
+                .row().button(messageManager.getMessage("button.task.new.cancel"), ButtonType.MAIN_MENU.getPayload())
                 .build();
     }
 }

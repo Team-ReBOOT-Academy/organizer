@@ -30,7 +30,7 @@ public class NewTaskImportantNoButtonHandler implements ButtonHandler {
 
         return UnifiedResponse.builder()
                 .text(messageManager.getMessage("task.new.success"))
-                .row().button(messageManager.getMessage("button.menu.task.list"), ButtonType.TASK_LIST.getPayload())
+                .row().button(messageManager.getMessage("button.task.list"), ButtonType.TASK_LIST_CATEGORIES.getPayload())
                 .row().button(messageManager.getMessage("button.menu"), ButtonType.MAIN_MENU.getPayload())
                 .build();
     }

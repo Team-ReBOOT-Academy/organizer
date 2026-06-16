@@ -56,13 +56,13 @@ public class NewTaskInputDeadlineScreenHandler implements ScreenHandler {
                     .row()
                     .button(messageManager.getMessage("button.task.new.important.yes"), ButtonType.NEW_TASK_IMPORTANT_YES.getPayload())
                     .button(messageManager.getMessage("button.task.new.important.no"), ButtonType.NEW_TASK_IMPORTANT_NO.getPayload())
-                    .row().button(messageManager.getMessage("button.task.cancel"), ButtonType.MAIN_MENU.getPayload())
+                    .row().button(messageManager.getMessage("button.task.new.cancel"), ButtonType.MAIN_MENU.getPayload())
                     .build();
         } catch (DateTimeParseException e) {
             return UnifiedResponse.builder()
                     .text(messageManager.getMessage("error.task.new.deadline.format") + "\n\n" + messageManager.getMessage("task.new.deadline"))
                     .row().button(messageManager.getMessage("button.task.new.deadline.skip"), ButtonType.NEW_TASK_SKIP_DEADLINE.getPayload())
-                    .row().button(messageManager.getMessage("button.task.cancel"), ButtonType.MAIN_MENU.getPayload())
+                    .row().button(messageManager.getMessage("button.task.new.cancel"), ButtonType.MAIN_MENU.getPayload())
                     .build();
         }
     }

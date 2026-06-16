@@ -29,7 +29,7 @@ public class MainMenuButtonHandler implements ButtonHandler {
                 .text(messageManager.getMessage("menu.header"))
                 .row()
                     .button(messageManager.getMessage("button.task.new"), ButtonType.NEW_TASK_INPUT_THEME.getPayload())
-                    .button(messageManager.getMessage("button.menu.task.list"), ButtonType.TASK_LIST.getPayload())
+                    .button(messageManager.getMessage("button.task.list"), ButtonType.TASK_LIST_CATEGORIES.getPayload())
                 .row()
                     .button(messageManager.getMessage("button.menu.connection"), ButtonType.LINK_PLATFORM.getPayload())
                 .build();

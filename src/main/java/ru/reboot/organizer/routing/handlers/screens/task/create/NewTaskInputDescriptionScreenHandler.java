@@ -30,7 +30,7 @@ public class NewTaskInputDescriptionScreenHandler implements ScreenHandler {
         return UnifiedResponse.builder()
                 .text(messageManager.getMessage("task.new.deadline"))
                 .row().button(messageManager.getMessage("button.task.new.deadline.skip"), ButtonType.NEW_TASK_SKIP_DEADLINE.getPayload())
-                .row().button(messageManager.getMessage("button.task.cancel"), ButtonType.MAIN_MENU.getPayload())
+                .row().button(messageManager.getMessage("button.task.new.cancel"), ButtonType.MAIN_MENU.getPayload())
                 .build();
     }
 }

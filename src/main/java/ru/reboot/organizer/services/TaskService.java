@@ -1,6 +1,8 @@
 package ru.reboot.organizer.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.reboot.organizer.database.entity.AppUser;
@@ -16,6 +18,8 @@ public class TaskService {
     private final AppUserRepository appUserRepository;
     private final TaskRepository taskRepository;
     private final SessionManagerService sessionManagerService;
+
+    private final int PAGE_SIZE = 5;
 
     @Transactional
     public void createTaskFromDraft(Long userId, boolean isImportant) {
@@ -40,5 +44,57 @@ public class TaskService {
         taskRepository.save(task);
 
         sessionManagerService.clearDraft(userId);
+    }
+
+    @Transactional
+    public Page<Task> getImportantTasks(Long userId, int pageNumber) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findByAppUserAndIsImportantTrueAndIsCompletedFalseOrderByCreatedAtDesc(
+                appUser, PageRequest.of(pageNumber, PAGE_SIZE));
+    }
+
+    @Transactional
+    public Page<Task> getCompletedTasks(Long userId, int pageNumber) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findByAppUserAndIsCompletedTrueOrderByCreatedAtDesc(
+                appUser, PageRequest.of(pageNumber, PAGE_SIZE)
+        );
+    }
+
+    @Transactional
+    public Page<Task> getOtherTasks(Long userId, int pageNumber) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findByAppUserAndIsImportantFalseAndIsCompletedFalseOrderByCreatedAtDesc(
+                appUser, PageRequest.of(pageNumber, PAGE_SIZE)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Task getTask(Long taskId, Long userId) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findTaskByIdAndAppUser(taskId, appUser)
+                .orElseThrow(() -> new IllegalStateException("Задача не найдена или к ней нет доступа"));
+    }
+
+    @Transactional
+    public void toggleTaskImportance(Long taskId, Long userId) {
+        Task task = getTask(taskId, userId);
+        task.setImportant(!task.isImportant());
+        taskRepository.save(task);
+    }
+
+    @Transactional
+    public void toggleTaskCompletion(Long taskId, Long userId) {
+        Task task = getTask(taskId, userId);
+        task.setCompleted(!task.isCompleted());
+        taskRepository.save(task);
     }
 }
