@@ -6,8 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.reboot.organizer.database.entity.AppUser;
+import ru.reboot.organizer.database.entity.Reminder;
 import ru.reboot.organizer.database.entity.Task;
 import ru.reboot.organizer.database.repository.AppUserRepository;
+import ru.reboot.organizer.database.repository.ReminderRepository;
 import ru.reboot.organizer.database.repository.TaskRepository;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,7 @@ public class TaskService {
     private final AppUserRepository appUserRepository;
     private final TaskRepository taskRepository;
     private final SessionManagerService sessionManagerService;
+    private final ReminderRepository reminderRepository;
 
     private final int PAGE_SIZE = 5;
 
@@ -42,6 +45,14 @@ public class TaskService {
         task.setCreatedAt(LocalDateTime.now());
 
         taskRepository.save(task);
+
+        if (task.getDeadline() != null) {
+            Reminder reminder = new Reminder();
+            reminder.setTask(task);
+            reminder.setReminderTime(task.getDeadline());
+
+            reminderRepository.save(reminder);
+        }
 
         sessionManagerService.clearDraft(userId);
     }
