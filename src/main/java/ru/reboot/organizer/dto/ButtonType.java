@@ -34,7 +34,11 @@ public enum ButtonType {
 
     // Динамические кнопки
     TASK_LIST_PAGE_TASKS("btn_task_list_page_tasks_"),
-    TASK_LIST_VIEW_TASK("btn_task_list_view_task_");
+    TASK_LIST_VIEW_TASK("btn_task_list_view_task_"),
+
+    TASK_TOGGLE_IMPORTANT("btn_task_toggle_imp_"),
+    TASK_TOGGLE_COMPLETED("btn_task_toggle_cmp_"),
+    TASK_DELETE("btn_task_delete_");
 
     private final String payload;
 

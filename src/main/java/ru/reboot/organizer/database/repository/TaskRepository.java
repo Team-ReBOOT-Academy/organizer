@@ -7,9 +7,12 @@ import ru.reboot.organizer.database.entity.AppUser;
 import org.springframework.stereotype.Repository;
 import ru.reboot.organizer.database.entity.Task;
 
+import java.util.Optional;
+
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<Task> findByAppUserAndIsImportantTrueAndIsCompletedFalseOrderByCreatedAtDesc(AppUser appUser, Pageable pageable);
     Page<Task> findByAppUserAndIsImportantFalseAndIsCompletedFalseOrderByCreatedAtDesc(AppUser appUser, Pageable pageable);
     Page<Task> findByAppUserAndIsCompletedTrueOrderByCreatedAtDesc(AppUser appUser, Pageable pageable);
+    Optional<Task> findTaskByIdAndAppUser(Long taskId, AppUser appUser);
 }

@@ -74,4 +74,27 @@ public class TaskService {
                 appUser, PageRequest.of(pageNumber, PAGE_SIZE)
         );
     }
+
+    @Transactional(readOnly = true)
+    public Task getTask(Long taskId, Long userId) {
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
+
+        return taskRepository.findTaskByIdAndAppUser(taskId, appUser)
+                .orElseThrow(() -> new IllegalStateException("Задача не найдена или к ней нет доступа"));
+    }
+
+    @Transactional
+    public void toggleTaskImportance(Long taskId, Long userId) {
+        Task task = getTask(taskId, userId);
+        task.setImportant(!task.isImportant());
+        taskRepository.save(task);
+    }
+
+    @Transactional
+    public void toggleTaskCompletion(Long taskId, Long userId) {
+        Task task = getTask(taskId, userId);
+        task.setCompleted(!task.isCompleted());
+        taskRepository.save(task);
+    }
 }
