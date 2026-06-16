@@ -29,8 +29,6 @@ public enum ButtonType {
 
     GENERATE_LINK_CODE("btn_generate_link_code"),
     ENTER_LINK_CODE("btn_enter_link_code"),
-    CONFIRM_LINK("btn_confirm_link"),
-    REJECT_LINK("btn_reject_link"),
 
     // Динамические кнопки
     TASK_LIST_PAGE_TASKS("btn_task_list_page_tasks_"),
@@ -38,7 +36,10 @@ public enum ButtonType {
 
     TASK_TOGGLE_IMPORTANT("btn_task_toggle_imp_"),
     TASK_TOGGLE_COMPLETED("btn_task_toggle_cmp_"),
-    TASK_DELETE("btn_task_delete_");
+    TASK_DELETE("btn_task_delete_"),
+
+    CONFIRM_LINK("btn_confirm_link_"),
+    REJECT_LINK("btn_reject_link_");
 
     private final String payload;
 

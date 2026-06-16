@@ -2,10 +2,17 @@ package ru.reboot.organizer.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.reboot.organizer.database.entity.AppUser;
+import ru.reboot.organizer.database.entity.AuthCode;
+import ru.reboot.organizer.database.repository.AppUserRepository;
+import ru.reboot.organizer.database.repository.AuthCodeRepository;
+import ru.reboot.organizer.database.repository.PlatformAccountRepository;
+import ru.reboot.organizer.database.repository.TaskRepository;
 
 import java.security.SecureRandom;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Сервис для подключения платформ
@@ -13,88 +20,70 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-@Deprecated
 public class PlatformLinkService {
-    private final String alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    private final int codeLength = 6;
-    private final int ttlMinutes = 10;
+    private final AuthCodeRepository authCodeRepository;
+    private final AppUserRepository appUserRepository;
+    private final PlatformAccountRepository platformAccountRepository;
+    private final TaskRepository taskRepository;
+    private final NotificationService notificationService;
 
-    private final SecureRandom random = new SecureRandom();
+    private final SecureRandom secureRandom = new SecureRandom();
 
-    // Заглушка
-    private final Map<String, Long> mockDatabase = new ConcurrentHashMap<>();
+    @Transactional
+    public String generateAndSaveCode(Long primaryUserId) {
+        AppUser primaryUser = appUserRepository.findById(primaryUserId)
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
 
-    private final Map<Long, Long> pendingConfirmations = new ConcurrentHashMap<>();
+        Optional<AuthCode> existingCode = authCodeRepository.findByAppUserAndIsUsedFalseAndExpiresAtAfter(
+                primaryUser, LocalDateTime.now()
+        );
 
-    @Deprecated
-    public String getOrGenerateCodeForUser(Long globalUserId) {
-        for (Map.Entry<String, Long> entry : mockDatabase.entrySet()) {
-            if (entry.getValue().equals(globalUserId)) {
-                return entry.getKey();
-            }
+        if (existingCode.isPresent()) {
+            return existingCode.get().getCode();
         }
 
-        String newCode = generateRandomCode();
-        //LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(ttlMinutes);
+        String code = String.format("%06d", secureRandom.nextInt(1000000));
+        AuthCode authCode = new AuthCode();
+        authCode.setCode(code);
+        authCode.setAppUser(primaryUser);
+        authCode.setExpiresAt(LocalDateTime.now().plusMinutes(10));
+        authCodeRepository.save(authCode);
 
-        // Заглушка
-        mockDatabase.put(newCode, globalUserId);
-
-        return newCode;
+        return code;
     }
 
-    @Deprecated
-    public boolean confirmLink(Long creatorUserId) {
-        Long targetUserId = pendingConfirmations.remove(creatorUserId);
-        if (targetUserId != null) {
-            // Заглушка
-            return true;
-        }
-        return false;
-    }
+    @Transactional
+    public Long validateCodeAndPrepareMerge(String code, Long secondaryUserId) {
+        AuthCode authCode = authCodeRepository.findByCodeAndIsUsedFalseAndExpiresAtAfter(code, LocalDateTime.now())
+                .orElseThrow(() -> new IllegalArgumentException("Код не найден, истек или уже был использован"));
 
-    @Deprecated
-    public void rejectLink(Long creatorUserId) {
-        // Заглушка
-        pendingConfirmations.remove(creatorUserId);
-    }
+        authCode.setUsed(true);
+        authCodeRepository.save(authCode);
 
-    // Заглушка
-    @Deprecated
-    public LinkAttemptResult linkAccountByCode(Long currentGlobalUserId, String inputCode) {
-        if (!mockDatabase.containsKey(inputCode)) {
-            return new LinkAttemptResult(LinkResult.INVALID, null);
+        AppUser primaryUser = authCode.getAppUser();
+
+        if (primaryUser.getId().equals(secondaryUserId)) {
+            throw new IllegalStateException("Вы пытаетесь связать аккаунт с самим собой");
         }
 
-        Long creatorUserId = mockDatabase.get(inputCode);
+        notificationService.sendMergeConfirmationRequest(primaryUser.getId(), secondaryUserId);
 
-        if (creatorUserId.equals(currentGlobalUserId)) {
-            return new LinkAttemptResult(LinkResult.SAME_USER, null);
-        }
-
-        mockDatabase.remove(inputCode);
-        pendingConfirmations.put(creatorUserId, currentGlobalUserId);
-
-        return new LinkAttemptResult(LinkResult.PENDING_CONFIRMATION, creatorUserId);
+        return primaryUser.getId();
     }
 
-    @Deprecated
-    private String generateRandomCode() {
-        StringBuilder sb = new StringBuilder(codeLength);
-        for (int i = 0; i < codeLength; i++) {
-            sb.append(alphabet.charAt(random.nextInt(alphabet.length())));
-        }
-        return sb.toString();
+    @Transactional
+    public void mergeAccounts(Long primaryUserID, Long secondaryUserId) {
+        AppUser primaryUser = appUserRepository.findById(primaryUserID)
+                .orElseThrow(() -> new IllegalStateException("Основной профиль не найден"));
+
+        AppUser secondaryUser = appUserRepository.findById(secondaryUserId)
+                .orElseThrow(() -> new IllegalStateException("Вторичный профиль не найден"));
+
+        platformAccountRepository.reassignAllAccounts(primaryUser, secondaryUser);
+        taskRepository.reassignAllTasks(primaryUser, secondaryUser);
+
+        appUserRepository.delete(secondaryUser);
     }
 
-    public enum LinkResult {
-        PENDING_CONFIRMATION,
-        SUCCESS,
-        INVALID,
-        EXPIRED,
-        SAME_USER
-    }
 
-    // Заглушка
-    public record LinkAttemptResult(LinkResult result, Long creatorUserId) {}
 }
