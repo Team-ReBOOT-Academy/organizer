@@ -1,4 +1,4 @@
-package ru.reboot.organizer.services.outbound;
+package ru.reboot.organizer.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +14,12 @@ import ru.SSP55.max.bots.api.objects.newmessagebody.NewMessageBody;
 import ru.reboot.organizer.database.entity.AppUser;
 import ru.reboot.organizer.database.entity.PlatformAccount;
 import ru.reboot.organizer.database.repository.AppUserRepository;
+import ru.reboot.organizer.dto.ButtonType;
 import ru.reboot.organizer.dto.UnifiedResponse;
+import ru.reboot.organizer.dto.UserScreens;
 import ru.reboot.organizer.mappers.max.MaxResponseMapper;
 import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
+import ru.reboot.organizer.utils.MessageManager;
 
 /**
  * Сервис отправки уведомлений пользователю
@@ -25,8 +28,12 @@ import ru.reboot.organizer.mappers.telegram.TelegramResponseMapper;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class NotificationService {
     private final AppUserRepository appUserRepository;
+
+    private final MessageManager messageManager;
+    private final SessionManagerService sessionManagerService;
 
     private final TelegramResponseMapper telegramResponseMapper;
     private final MaxResponseMapper maxResponseMapper;
@@ -34,7 +41,6 @@ public class NotificationService {
     private final TelegramClient telegramClient;
     private final MaxClient maxClient;
 
-    @Transactional(readOnly = true)
     public void sendNotification(Long globalUserId, UnifiedResponse notificationContent) {
         AppUser appUser = appUserRepository.findById(globalUserId).orElse(null);
         if (appUser == null) {
@@ -84,5 +90,27 @@ public class NotificationService {
             default:
                 log.error("Неизвестная платформа для отправки: {}", targetPlatform);
         }
+    }
+
+    public void sendMergeConfirmationRequest(Long primaryUserId, Long secondaryUserId) {
+        sessionManagerService.setUserScreen(primaryUserId, UserScreens.LINK_PLATFORM_APPROVAL);
+
+        UnifiedResponse response = UnifiedResponse.builder()
+                .text(messageManager.getMessage("link.notification.confirm"))
+                .row()
+                    .button(messageManager.getMessage("button.link.confirm"), ButtonType.CONFIRM_LINK.getPayload() + secondaryUserId)
+                    .button(messageManager.getMessage("button.link.reject"), ButtonType.REJECT_LINK.getPayload() + secondaryUserId)
+                .build();
+
+        sendNotification(primaryUserId, response);
+    }
+
+    public void sendMergeSuccessNotification(Long userId) {
+        UnifiedResponse response = UnifiedResponse.builder()
+                .text(messageManager.getMessage("link.notification.success"))
+                .row().button(messageManager.getMessage("button.menu"), ButtonType.MAIN_MENU.getPayload())
+                .build();
+
+        sendNotification(userId, response);
     }
 }
