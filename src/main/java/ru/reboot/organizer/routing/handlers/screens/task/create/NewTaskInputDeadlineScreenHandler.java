@@ -46,6 +46,10 @@ public class NewTaskInputDeadlineScreenHandler implements ScreenHandler {
         try {
             LocalDateTime deadline = LocalDateTime.parse(text.trim(), formatter);
 
+            if (deadline.isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("Ошибка, дедлайн не может быть раньше текущего времени");
+            }
+
             SessionManagerService.TaskDraft draft = sessionManagerService.getOrCreateDraft(userId);
             draft.setDeadline(deadline);
 
@@ -61,6 +65,12 @@ public class NewTaskInputDeadlineScreenHandler implements ScreenHandler {
         } catch (DateTimeParseException e) {
             return UnifiedResponse.builder()
                     .text(messageManager.getMessage("error.task.new.deadline.format") + "\n\n" + messageManager.getMessage("task.new.deadline"))
+                    .row().button(messageManager.getMessage("button.task.new.deadline.skip"), ButtonType.NEW_TASK_SKIP_DEADLINE.getPayload())
+                    .row().button(messageManager.getMessage("button.task.new.cancel"), ButtonType.MAIN_MENU.getPayload())
+                    .build();
+        } catch (IllegalArgumentException e) {
+            return UnifiedResponse.builder()
+                    .text(messageManager.getMessage("error.task.new.deadline.date") + "\n\n" + messageManager.getMessage("task.new.deadline"))
                     .row().button(messageManager.getMessage("button.task.new.deadline.skip"), ButtonType.NEW_TASK_SKIP_DEADLINE.getPayload())
                     .row().button(messageManager.getMessage("button.task.new.cancel"), ButtonType.MAIN_MENU.getPayload())
                     .build();
